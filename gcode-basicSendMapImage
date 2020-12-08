@@ -1,0 +1,43 @@
+function sendMapsImage() {
+
+//var address = 'Assumption College Nakhon Ratchasima'
+var latitude = 14.987417 
+var longitude = 102.092187
+
+// StaticMap
+var map = Maps.newStaticMap()
+.setSize(600, 600)  //(Max: 600×600)
+.setLanguage('TH')
+.setMobile(true)
+.setMapType(Maps.StaticMap.Type.HYBRID)
+
+// StaticMap
+//map.addMarker(address)
+ map.addMarker(latitude, longitude)
+
+// Blob
+var mapBlob = map.getBlob()
+Logger.log(mapBlob)
+// StaticMap
+var mapUrl = map.getMapUrl()
+
+// Line
+sendHttpPostImage(mapUrl, mapBlob)
+}
+
+
+function sendHttpPostImage(mapUrl, mapBlob){
+var token = "xxxx";
+var formData = {
+'message' : '\n'+mapUrl,
+'imageFile': mapBlob
+}
+var options =
+{
+"method"  : "post",
+"payload" : formData,  // message, imageFile, formData, Post
+"headers" : {"Authorization" : "Bearer "+ token}
+};
+
+UrlFetchApp.fetch("https://notify-api.line.me/api/notify%22,options);  
+}
