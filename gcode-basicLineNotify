@@ -1,0 +1,14 @@
+var token ="xxx"//โทเคน
+function sendNotify(msg){
+let payloadJson = {
+       "message": msg
+    };
+    let options = {
+        "method": "post",
+        "payload": payloadJson,
+        "headers": {
+            "Authorization": "Bearer " + token
+        }
+    };
+    UrlFetchApp.fetch("https://notify-api.line.me/api/notify", options);
+}
