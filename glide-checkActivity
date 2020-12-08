@@ -1,0 +1,41 @@
+function myFunction() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('xxx')//ชื่อชีต
+  var names = ss.getRange(1, 2,1,ss.getLastColumn()).getValues()[0]
+  var check = ss.getRange(ss.getLastRow(), 2,1,ss.getLastColumn()).getValues()[0]
+  var std = names.length-1
+  var date = Utilities.formatDate(new Date(), 'GMT+7', 'dd/MM/')
+  var year = Number(Utilities.formatDate(new Date(), 'GMT+7', 'yyyy'))+543
+  
+  var index =1
+
+  var countNo = check.filter(x=> x == "ไม่เข้าร่วมกิจกรรม").length
+  var countCheck = std-countNo
+  var result = ""
+  check.forEach((row,i)=>{
+                if(row == "ไม่เข้าร่วมกิจกรรม"){
+    result+= "\n"+ (index++)+ names[i]
+  }
+
+
+    })
+
+    var msg = "วันที่ "+date+year+"\n นักเรียนทั้งหมด "+std+" คน \n เข้าร่วมกิจกรรม "+countCheck+" คน \n ไม่เข้าร่วม "+countNo+ " คน\n รายชื่อผู้ไม่เข้าร่วมกิจกรรม ได้แก่ \n"+result
+    sendNotify(msg)
+}  
+var token ="xxx"//โทเคน
+function sendNotify(msg){
+let payloadJson = {
+       "message": msg
+    };
+
+    let options = {
+        "method": "post",
+        "payload": payloadJson,
+        "headers": {
+            "Authorization": "Bearer " + token
+        }
+    };
+    UrlFetchApp.fetch("https://notify-api.line.me/api/notify", options);
+}
+
+
