@@ -1,0 +1,96 @@
+ระบบรับสมัคร ซูมวันที่ 14 พย 63
+//พัฒนาโดยครูอภิวัฒน์ วงศ์กัณหา ช่องยูทูป "ครูอภิวัฒ์ สอนสร้างสื่อ"
+ var Tempfolder ;
+ var fileSlide ;
+ var copyFile;
+ 
+function myFunction() {
+var form = FormApp.openById('aaa'); // ***ใส่ form id***
+var fRes = form.getResponses();
+var fRes = fRes[fRes.length - 1];
+var item = fRes.getItemResponses();
+var data0 = item[0].getResponse(); //***ชื่อ สกุล
+var data1 = item[1].getResponse(); //***ชื่อเล่น
+var data2 = item[2].getResponse(); //***วันเกิด
+var data3 = 'https://doc.google.com/uc?export=view&id='+ item[3].getResponse();
+  
+   Tempfolder = DriveApp.getFolderById('aaa')//***โฟลเดอร์ชั่วคราว
+   fileSlide = DriveApp.getFileById('aaa')//***ไฟล์สไลด์แม่แบบ
+   copyFile = fileSlide.makeCopy('test', Tempfolder)//***คัดลอกไฟล์สไลด์ไปใส่ไว้ในโฟลเดอร์ชั่วคราว
+   var fileId = copyFile.getId(); //***ไอดีของสไลด์ที่คัดลอก
+   var slideCopy = SlidesApp.openById(fileId);//***เปิดไฟล์สไลด์ที่คัดลอก
+  
+      slideCopy.replaceAllText('{{ชื่อ สกุล}}',data0)
+      slideCopy.replaceAllText('{{ชื่อเล่น}}',data1)
+      slideCopy.replaceAllText('{{วันเกิด}}',data2)
+      var image = slideCopy.getPageElementById('aaa').asImage()
+      image.replace(data3) //***แทรกรูปภาพที่มาจากฟอร์ม แทนที่ภาพเดิมที่อยู่ในสไลด์
+     slideCopy.saveAndClose(); //***บันทึกและปิดไฟล์สไลด์
+     start(fileId);
+     
+  //ส่งเมล+แนบ pdf
+  var recipient = "aaa " //***ใส่อีเมลที่ต้องการส่ง  
+  var subject = "ทดสอบ"  
+  var body = "สงไฟล์ pdf"
+  var file = DriveApp.getFileById(fileId)
+  var pdf = file.getAs(MimeType.PDF)
+  var options = {attachments:[pdf]}
+      MailApp.sendEmail(recipient, subject, body, options)
+ }
+
+//สร้างสไลด์ให้เป็นรูปภาพ
+function downloadPresentation(id) {
+  var slideIds = getSlideIds(id); 
+let imagesblob = []
+  for (var i = 0, slideId; slideId = slideIds[i]; i++) {
+    imagesblob.push(downloadSlide('Slide ' + (i + 1), id, slideId));
+  }
+  return imagesblob
+}
+function downloadSlide(name, presentationId, slideId) {
+  var url = 'https://docs.google.com/presentation/d/' + presentationId +
+    '/export/png?id=' + presentationId + '&pageid=' + slideId; 
+  var options = {
+    headers: {
+      Authorization: 'Bearer ' + ScriptApp.getOAuthToken()
+    }
+  };
+  var response = UrlFetchApp.fetch(url, options);
+  var image = response.getAs(MimeType.PNG);
+  image.setName(name);
+  return image
+}
+function getSlideIds(presentationId) {
+  var url = 'https://slides.googleapis.com/v1/presentations/' + presentationId;
+  var options = {
+    headers: {
+      Authorization: 'Bearer ' + ScriptApp.getOAuthToken()
+    }
+  };
+  var response = UrlFetchApp.fetch(url, options);
+  var slideData = JSON.parse(response);
+  return slideData.slides.map(function(slide) {
+    return slide.objectId;
+  });
+}
+function start(SlideID) {
+  let images = downloadPresentation(SlideID)  
+  images.forEach(image=>{sendNotify(image)})  
+ Tempfolder.removeFile(copyFile)
+}
+//ส่งไลน์แจ้งเตือน
+function sendNotify(image){
+let payloadJson = {
+       "message": 'มาแว้ว ขอบคุณครูอภิวัฒน์จ้า',
+       "imageFile": image
+    };
+    let token = ["aaa"]; //***ใส่ token
+    let options = {
+        "method": "post",
+        "payload": payloadJson,
+        "headers": {
+            "Authorization": "Bearer " + token
+        }
+    };
+    UrlFetchApp.fetch("https://notify-api.line.me/api/notify", options);
+}
