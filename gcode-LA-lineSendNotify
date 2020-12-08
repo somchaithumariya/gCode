@@ -1,0 +1,101 @@
+function ReportData() {
+  
+//=====================ใส่ไว้เพื่อให้คิดถึงกันเวลามีปัญหา สามารถลบทิ้งได้คับ =========================
+//===============================ระบบรายงานการอนุมัติการลา=================================
+//====================================จัดทำโดย=========================================
+//================================นายสมพงษ์  โพคาศรี====================================
+//==========มือถือ : 095-6659190  email: spkorat0125@gmail.com  Line: guytrue===========
+//=====โรงเรียนหนองกราดวัฒนา ต.หนองกราด อ.ด่านขุนทด จ. นครราชสีมา 30210 โทรศัพท์ 044-973561=====
+//===============สามารถเพิ่มอิโมจิสวย ๆ  ได้จากเว็ไซต์  https://getemoji.com/===================
+
+var ss=SpreadsheetApp.getActive() //กำหนดใช้ url ของชีตใน ss
+var sht1 = ss.getSheetByName("การตอบแบบฟอร์ม 1");  //ชีตหลัก
+
+//======================ชุด Token================================
+var token1="เปลี่ยน token id ห้องที่แจ้งเตือน";  // token id ห้อง 1
+//var token2=shtmain.getRange(3, 2).getValue();  // token id ห้อง 2
+
+var strWeek = ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"]; //ฟังชก์ชันหาวันในสัปดาห์
+var strMonthFull = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"]; //ฟังก์ชันเดือน
+
+     
+//***กำหนดข้อมูลวันที่ปัจจุบัน***
+var  d = new Date(); //กำหนด d เก็บวันที่วันนี้
+var curdate=d.getDate(); // วันที่ 1-31
+var daycur = d.getDay(); // วัน 0-6 เพื่อไปค้นหาวัน จันทร์-ศุกร์
+var monthcur=d.getMonth();  //เลขเดือน 0-11 เพื่อไปหา มกราคม-ธัวาคม
+var yearcur =d.getFullYear()+543; //เพิ่มปี ค.ศ. ให้เป็น พ.ศ.
+var MonthId = strMonthFull[monthcur]; //เลือกเดือนภาษาไทย มกราคม-ธันวาคม
+var curweek = strWeek[daycur]; //ค้นหาวันของวันปัจจุบัน
+  
+var lastRow = sht1.getLastRow();  
+var data1=sht1.getRange(lastRow,1).getValue();
+
+  
+var strhour=Utilities.formatDate(data1, "Asia/Bangkok", "HH");  // HH 
+var strMinute=Utilities.formatDate(data1, "Asia/Bangkok", "mm"); //m กับ mm
+//var strSecMinute=Utilities.formatDate(sht1.getRange(i+1,4).getValue(), "Asia/Bangkok", "ss"); //s กับ ss
+var HMS=strhour+':'+strMinute;  
+
+var dayThai=YearThai(data1,2);
+
+var data3=sht1.getRange(lastRow,2).getValue(); //ประเภท
+
+  if (data3=='ครู'){
+    sht1.getRange(1, 12).copyTo(sht1.getRange(lastRow ,12) , {contentsOnly:false});//สำเนาสูตร
+    var data2=sht1.getRange(lastRow,3).getValue();//ผู้ขอ    
+    var data4=sht1.getRange(lastRow,4).getValue();//การลา
+    var data10=sht1.getRange(lastRow,12).getDisplayValue();        
+    data10 = encodeURI(data10.replace(/ /g,"%20"))
+    data10 = data10.replace(/&/g,"%26");    
+            
+   //Logger.log(data10)
+   
+    var msg='⏰ระบบแจ้งขออนุญาตลา'+'\nวันที่ '+dayThai+' เวลา '+HMS+' น.'+'\n\nชื่อ(ผู้ขอลา) : '+data2+'\nประเภทการลา : '+data4+'\n\nกดลิงค์เพื่อกำหนดการขออนุมัติ : '+data10
+    //Logger.log(msg)
+    //MailApp.sendEmail('spkorat0125@gmail.com', "ขออนุมัติการลา :"+data2, msg+" กดลิงค์เพื่อกำหนดขออนุมัติ : "+data10) //ส่งเมล์
+  }else{
+    var data6=sht1.getRange(lastRow,6).getValue();//ผู้อนุมัติ
+    var data7=sht1.getRange(lastRow,7).getValue(); //ผู้ชอ
+    var data8=sht1.getRange(lastRow,8).getValue(); //การลา
+    var data9=sht1.getRange(lastRow,9).getValue();//การอนุมัติ
+    
+       var msg='⏰ระบบแจ้งการขออนุมัติลา'+'\nวันที่ '+dayThai+' เวลา '+HMS+' น.'+'\n\nชื่อ(ผู้อนุมัติ) : '+data6+'\nชื่อ(ผู้ขอลา) : '+data7+'\nประเภทการลา : '+data8+'\nผลการขอยื่นการลา : '+data9
+       //sendLineNotify(msg,token1); //สั่งแจ้งเตือนห้องที่ 1  
+  }
+  sendLineNotify(msg,token1); //สั่งแจ้งเตือนห้องที่ 1  
+    //sendLineNotify(data10,token1);   
+} //จบฟังก์ชั่น
+  
+//=================ส่วนของฟังก์ชันแจ้งเตือนไลน์======================= 
+function sendLineNotify(message,token) { //ชุดฟังก์ชันแจ้งเตือนไลน์
+    var options = {
+        "method": "post",
+        "payload": "message=" + message,
+        "headers": {
+            "Authorization": "Bearer " + token
+        }
+    };
+ 
+    UrlFetchApp.fetch("https://notify-api.line.me/api/notify", options);
+}
+  
+function YearThai(Edate,typeID){
+  var strYear = parseInt(Utilities.formatDate(Edate, "Asia/Bangkok", "yyyy")) + 543;
+
+  if (typeID==1){
+    var strDay = Utilities.formatDate(new Date(), "Asia/Bangkok", "d");
+    var strMonth = Utilities.formatDate(new Date(), "Asia/Bangkok", "M");
+  }
+  else{
+    var strDay = Utilities.formatDate(Edate, "Asia/Bangkok", "dd");
+    var strMonth = Utilities.formatDate(Edate, "Asia/Bangkok", "MM");    
+  }
+  
+var ythai = '';
+var ythai = strDay+"/"+strMonth+"/"+strYear ; //นำวันและเดือนมาผสมกัยเป็น  วัน/เดือน/ปี ค.ศ. เพื่อใช้เทียบค่า     
+return ythai;
+}
+  
+  
+  
