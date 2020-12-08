@@ -1,0 +1,43 @@
+function myFunction() {
+ var ss = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('เช็คชื่อเข้าเรียน ม3')
+ var names = ss.getRange(1, 2, 1, ss.getLastColumn()).getValues()[0]
+ var check = ss.getRange(ss.getLastRow(), 2, 1, ss.getLastColumn()).getValues()[0]
+ var std = names.length-1
+ var date = Utilities.formatDate(new Date(), 'GMT+7', 'dd/MM/')//วันที่
+ var year = Number(Utilities.formatDate(new Date(), 'GMT+7', 'yyyy'))+543 //พศ.
+ 
+ var index = 1 //รันลำดับที่
+ var countNo = check.filter(col=> col =="ขาด" || col == "ลากิจ" || col == "ลาป่วย").length //นับจำนวนไม่มา
+ var countLate = check.filter(col=> col =="สาย").length //นับจำนวนสาย
+ var countCheck = std-countNo //มาเรียนเท่าไร
+ var result = ""
+ check.forEach((r,i)=>{
+    if(r == "ขาด" || r == "ลากิจ" || r == "ลาป่วย" || r == "สาย"){
+   result+= "\n"+(index++)+". "+names[i]+": "+r
+     }
+   })
+  var msg = "วันที่ "+date+year+"\n นักเรียนทั้งหมด "+std+" คน \n มาเรียนทั้งหมด "+countCheck+" คน \n สาย "+countLate+" คน \n มีนักเรียนไม่มาเรียนจำนวน "+countNo+" คน ได้แก่"+result
+  sendNotify(msg, token1)
+  sendNotify(msg, token2)
+  //sendNotify(msg, token3)
+}
+
+var token1 = "6LpUxcRM5gROjDFYKQhyxftmnokR8r04dcAXjXmTuol"//โทเคน1-ห้องลับส่วนตัวครูสมชาย
+var token2 = "XR6562c5CTC9HnLNbuLzNDT9KkSsNjfh48zWh8Y9Ezv"//โทเคน2-ครูสมชายแจ้งม3
+//var token3 = "xxx"//โทเคน3
+
+//ส่งไลน์แจ้งเตือน
+function sendNotify(msg, token){
+let payloadJson = {
+       "message": msg
+    };
+    //let token = ["6LpUxcRM5gROjDFYKQhyxftmnokR8r04dcAXjXmTuol"]; //ใส่ token
+    let options = {
+        "method": "post",
+        "payload": payloadJson,
+        "headers": {
+            "Authorization": "Bearer " + token
+        }
+    };
+    UrlFetchApp.fetch("https://notify-api.line.me/api/notify", options);
+}
