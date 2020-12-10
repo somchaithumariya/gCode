@@ -1,0 +1,11 @@
+//ส่งไลน์แจ้งเตือน + รูปภาพ
+var token1 =  'lhTeflWAu8DWGmlBDjSjKXcxSBTYYnXLLwcbNHx1Ah4';
+var token2 =  'lhTeflWAu8DWGmlBDjSjKXcxSBTYYnXLLwcbNHx1Ah4';
+
+function start(SlideFileID) {
+  let images = downloadPresentation(SlideFileID);  
+  images.forEach(image=>{
+   sendNotify(image,token1)
+   sendNotify(image,token2)
+   })
+}
