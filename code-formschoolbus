@@ -1,0 +1,34 @@
+function onFormSubmit() {
+
+var form = FormApp.openById('1Y8WcL7l0gEqXGcFUcjp3M_R9FPalPT-Lv3HLr_K-rOE'); // ***ใส่ form id***
+var fRes = form.getResponses();
+
+var formResponse = fRes[fRes.length - 1];
+var itemResponses = formResponse.getItemResponses();
+
+var msg = 'รถรับส่งนักเรียน';//+
+// ' \n' + itemResponses[0].getItem().getTitle() + ': ' + itemResponses[0].getResponse() +
+// ' \n' + itemResponses[0].getItem().getTitle() + ': ' + itemResponses[0].getResponse() +
+// ' \n' + itemResponses[0].getItem().getTitle() + ': ' + itemResponses[0].getResponse() +
+// ' \n' + itemResponses[0].getItem().getTitle() + ': ' + itemResponses[0].getResponse()
+
+for (var i = 0; i < itemResponses.length; i++) {
+msg += ' \n' + itemResponses[i].getItem().getTitle() + ': ' + itemResponses[i].getResponse();
+}
+sendLineNotify(msg);
+// Logger.log(msg)
+}
+
+function sendLineNotify(message) {
+
+var token = ["DLHS3rSSRMhd0IdJalVjwfNLCaT1u7o3oEO3F675tjl"]; // ***ใส่ token ของกลุ่ม Line ที่ใช้งาน***
+var options = {
+"method": "post",
+"payload": "message=" + message,
+"headers": {
+"Authorization": "Bearer " + token
+}
+};
+
+UrlFetchApp.fetch("https://notify-api.line.me/api/notify", options);
+}
