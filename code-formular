@@ -1,0 +1,2 @@
+=ARRAYFORMULA(IFERROR(VLOOKUP(F1:F,location!A:B,2,FALSE()),""))
+=HYPERLINK("https://goo.gl/maps/s6QHGH3Bt9SiN4PbA%22,A5)
