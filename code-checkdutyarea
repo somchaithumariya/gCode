@@ -1,0 +1,37 @@
+function onFormSubmit() {
+
+var form = FormApp.openById('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'); //ID Form
+var fRes = form.getResponses();
+
+var formResponse = fRes[fRes.length - 1];
+var itemResponses = formResponse.getItemResponses();
+
+var suggestion= itemResponses[5].getResponse()
+var msg = '📣 รายงานการตรวจเขตพื้นที่รับผิดชอบ'+
+      ' \n😀' + itemResponses[0].getItem().getTitle() + ': ' + itemResponses[0].getResponse() +
+      ' \n🤓' + itemResponses[3].getItem().getTitle() + ': ' + itemResponses[3].getResponse() +
+      ' \n👍' + itemResponses[4].getItem().getTitle() + ': ' + itemResponses[4].getResponse()
+
+  if (suggestion !="") {
+    msg=msg+' \n✍️' + itemResponses[5].getItem().getTitle() + ': ' + itemResponses[5].getResponse()
+    }
+
+sendLineNotify(msg);
+
+}
+
+function sendLineNotify(message) {
+
+var token = ["yyyyyyyyyyyyyyyyyyyyyyy"];  //ห้องแจ้งเตือน
+var options = {
+"method": "post",
+"payload": "message=" + message,
+"headers": {
+"Authorization": "Bearer " + token
+}
+};
+
+UrlFetchApp.fetch("https://notify-api.line.me/api/notify", options);
+}
+
+//พอดีมีน้องโรงเรียนนึงให้ช่วยทำเช็คเขตรับผิดชอบ เงื่อไข ไม่แสดงข้อมูลทุกอันและหากมีข้อเสนอแนะให้แสดงด้วย หากไม่มีไม่แสดง
