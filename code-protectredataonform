@@ -1,0 +1,15 @@
+โค้ดป้องกันการกรอกข้อมูลซ้ำบนฟอร์ม
+////////////
+var sheetId = "xxx"
+var formId = "xxx"
+
+function myFunction() {
+  var ss = SpreadsheetApp.openById(sheetId)
+  var sheet = ss.getSheetByName("การตอบแบบฟอร์ม 1")
+  var form = FormApp.openById(formId)
+  var data = [...new Set(sheet.getDataRange().getDisplayValues().map(row=> row[1]))].join('|')
+  var item = form.getItems().filter(item=>item.getTitle() == 'xxx')[0].asTextItem()
+  var pattern = (${data})
+  var textval = FormApp.createTextValidation().setHelpText("xxx!!").requireTextDoesNotMatchPattern(pattern).build()
+      item.setValidation(textval)
+}
