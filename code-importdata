@@ -1,0 +1,1 @@
+=importData(concatenate("http://tinyurl.com/api-create.php?url=%22,G5))
