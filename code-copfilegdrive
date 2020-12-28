@@ -1,0 +1,14 @@
+//แชร์ Standalone Scripts ครับ copy code ไปปรับเปลี่ยน 2 จุดใช้ได้ สำหรับไว้ copy ไฟล์ที่อยู่ใน Filter แชร์กับฉัน (ไม่รองรับ folder รองรับเฉพาะไฟล์ที่อยู่ใน filter แชร์กับฉัน)
+
+
+/*shared with me เป็น Filter ไม่ใช่ Folder*/
+function sharedWithMeCopyFile() {
+  var files = DriveApp.searchFiles('sharedWithMe');         //เป็นการค้นหาไฟล์ใน Filter shared with me (ไม่ต้องปรับเปลี่ยนชื่อ)
+  var toFolderID = DriveApp.getFolderById('id folder');   //id folder paste target ปลายทางที่ต้องการให้ไฟล์ไปเก็บ
+  var newFolder = toFolderID.createFolder('namefolder');     //ตั้งชื่อ folder ที่ให้ไฟล์ไปเก็บ
+  
+  while (files.hasNext()) {
+    var file = files.next();
+    file.makeCopy(file.getName(),newFolder);
+  }
+}
