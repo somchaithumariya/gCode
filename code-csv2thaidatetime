@@ -1,0 +1,13 @@
+function cnvToThaiDateTime(vDate) {
+  // return 31/12/2563
+  return vDate.toLocaleString('th-TH' ,
+                              {
+                                year : 'numeric',
+                                month: '2-digit',
+                                day  : '2-digit'                              
+                              }); 
+  
+  // toLocaleString
+  // toLocaleDateString
+  // toLocaleTimeString
+}
