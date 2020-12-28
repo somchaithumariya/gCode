@@ -1,0 +1,47 @@
+function cheek() {
+var form = FormApp.getActiveForm()
+var fRes = form.getResponses();
+
+var formResponse = fRes[fRes.length - 1];
+var itemResponses = formResponse.getItemResponses();
+
+var msg = '🌸รายงานออกตรวจฝ่ายบริหาร🌸';//+
+// ' \n' + itemResponses[0].getItem().getTitle() + ': ' + itemResponses[0].getResponse() +
+// ' \n' + itemResponses[0].getItem().getTitle() + ': ' + itemResponses[0].getResponse() +
+// ' \n' + itemResponses[0].getItem().getTitle() + ': ' + itemResponses[0].getResponse() +
+// ' \n' + itemResponses[0].getItem().getTitle() + ': ' + itemResponses[0].getResponse()
+
+for (var i = 0; i < itemResponses.length-1; i++) {
+msg += ' \n' + itemResponses[i].getItem().getTitle() + ' ' + itemResponses[i].getResponse();
+
+}
+  msg=msg+'\n' + itemResponses[6].getItem().getTitle();
+  var image_id = itemResponses[6].getResponse();
+  //Logger.log('all_message = ', all_message);
+  //Logger.log('image_id = ', image_id);
+  
+ var token = "KJuuozFKDjIsp5VDtZ2neYHnhHkYgRbhNbDAk3rliM3";
+ //var message = '';
+  var IMAGE_URL = 'https://drive.google.com/uc?export=view&id='+ image_id;
+ //var IMAGE_URL = "";   
+  var imgThumbnail = IMAGE_URL; // 240×240px JPEG
+  var imgFullsize =  IMAGE_URL; //1024×1024px JPEG
+
+  //Logger.log('IMAGE_URL = ', IMAGE_URL);
+  
+  var formData = {
+    'message' : msg,
+    'imageThumbnail': imgThumbnail,
+    'imageFullsize' : imgFullsize,
+  }
+
+  var options = {
+    "method" : "post",
+    "payload" : formData,
+    "headers" : {"Authorization" : "Bearer " + token}
+  };
+  
+  UrlFetchApp.fetch("https://notify-api.line.me/api/notify", options);
+  // */
+ 
+}
