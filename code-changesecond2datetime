@@ -1,0 +1,8 @@
+//--------------------------------------------------------
+// แปลงวินาที เป็น วันเวลา [public method]
+//--------------------------------------------------------
+function cnvUnixTimeToDateTime(unixTimestamp){
+     const milliseconds = unixTimestamp * 1000;
+     const dateObj      = new Date(milliseconds)
+     return dateObj.toLocaleString()
+}
