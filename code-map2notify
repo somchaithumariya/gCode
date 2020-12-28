@@ -1,0 +1,40 @@
+function Map2Notify() {
+
+  var address = "ปากช่อง";
+  var address2 = "สีคิ้ว";
+  var address3 = "สูงเนิน";
+  var address4 = '14.975928487478662, 102.08129991527017';
+  
+  
+  var map = Maps.newStaticMap()
+          .setSize(600, 600)
+          .setCenter(address)// แสดงหมุดไว้กลางภาพ
+          //.setLanguage('TH')
+          .addMarker(address) // latitude longtitude ระบุพิกัด
+         // .addAddress(address2) // ที่อยู่
+         // .addAddress(address) // ที่อยู่
+          .setMarkerStyle(Maps.StaticMap.MarkerSize.MID, Maps.StaticMap.Color.RED, 'T')
+          .setMapType(Maps.StaticMap.Type.HYBRID)
+          
+  
+           
+  var mapBlob = map.getBlob()
+  var msg = directions
+
+  
+  sendHttpPostImage(msg, mapBlob)
+}
+
+
+
+function sendHttpPostImage(msg, mapBlob){
+var token = "xxxxxxx";
+var formData = {
+'message' : '\n'+msg,
+'imageFile': mapBlob
+}
+var options =
+{
+"method"  : "post",
+"payload" : formData,  // message, imageFile, formData, Post
+"headers" : {"Authorization" : "Beare
