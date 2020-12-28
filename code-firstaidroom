@@ -1,0 +1,29 @@
+function onFormSubmit() {
+var token = "xxxx";  // **ใส่ token**
+var form = FormApp.openById(‘xxxx’); // **ใส่ form id**
+var fRes = form.getResponses();
+var formResponse = fRes[fRes.length - 1];
+var itemResponses = formResponse.getItemResponses();
+
+var message = '💊 บันทึกการใช้ห้องพยาบาล';//+ 
+
+for (var i = 0; i < itemResponses.length; i++) {
+message += '\n' +'💬 '+ itemResponses[i].getItem().getTitle() + ': ' + itemResponses[i].getResponse();
+}
+  sendLineNotify('\n'+message, token);
+}
+
+
+function sendLineNotify(message, token){
+  var options =
+   {
+     "method"  : "post",
+     "payload" : 
+     {
+       "message" : message,
+     },
+     "headers" : {"Authorization" : "Bearer " + token}
+   };
+   UrlFetchApp.fetch("https://notify-api.line.me/api/notify", options);
+}
+
