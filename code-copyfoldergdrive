@@ -1,0 +1,29 @@
+//แชร์ Standalone Scripts ครับ copy code ไปปรับเปลี่ยน 3 จุดใช้ได้ สำหรับไว้ copy ไฟล์และ folder ที่คนอื่นแชร์และเราทำสำเนาทีละไฟล์ ถ้ารู้สึกช้าลองนำไปประยุกต์ใช้ครับ (รองรับ copy ไฟล์ที่อยู่ใน folder รวมถึง folder นั้นด้วย ไม่รองรับ single file เดี่ยวๆที่อยู่ในแชร์กับฉัน)
+
+function Start() {
+    var sourceFolder = DriveApp.getFolderById('id folder');   //id folder ต้นทาง ต้องการ copy folder ไหนใส่ id folder นั้น
+    var targetFolder = DriveApp.getFolderById('id folder');   //id folder ปลายทาง ต้องการ paste folder ไหนใส่ ide folder นั้น
+
+    var source = DriveApp.getFoldersByName(sourceFolder);
+    var target = targetFolder.createFolder('%copy');      //ตั้งชื่อ Folder ที่จะให้ไฟล์หรือ folder มาเก็บ อย่ายาวมาก ควรเป็นภาษาอังกฤษ
+
+        if (source.hasNext()) {
+            copyFolder(source.next(), target);
+        }
+}
+
+function copyFolder(source, target) {
+    var folders = source.getFolders();
+    var files   = source.getFiles();
+        while(files.hasNext()) {
+        var file = files.next();
+        file.makeCopy(file.getName(), target);
+        }
+        
+        while(folders.hasNext()) {
+        var subFolder = folders.next();
+        var folderName = subFolder.getName();
+        var targetFolder = target.createFolder(folderName);
+        copyFolder(subFolder, targetFolder);
+        }
+}
