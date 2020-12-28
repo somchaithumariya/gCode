@@ -1,0 +1,31 @@
+//นำเข้าข้อมูลจากปฏิทิน ลงชีท
+
+function getevents() {
+      var ss = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();   
+      var cal = CalendarApp.getCalendarById("ใส่ id ปฏิทินครับ");  
+      var events = cal.getEvents(new Date("9/1/2020 12:00 AM"), new Date("11/1/2020 12:00 AM"));//ช่วงเวลาที่กำหนดนำเข้าข้อมูล
+      
+      var lr = ss.getLastRow();
+      ss.getRange(2, 1,lr-1,5).clearContent();
+      
+      for(var i = 0; i < events.length;i++){  //กำหนดช่วงข้อมูลที่จะทำ
+      
+           var title = events[i].getTitle();
+           var sd = events[i].getStartTime();
+           var ed = events[i].getEndTime();
+           var loc = events[i].getLocation();
+           var dcp = events[i].getDescription();
+                  
+           ss.getRange(i+2, 1).setValue(title);
+           ss.getRange(i+2, 2).setValue(sd);
+           ss.getRange(i+2, 2).setNumberFormat("dd/mm/yyyy hh:mm:ss AM/PM") //จัดรูปแบบ
+           ss.getRange(i+2, 3).setValue(ed);
+           ss.getRange(i+2, 3).setNumberFormat("dd/mm/yyyy hh:mm:ss AM/PM")  //จัดรูปแบบ
+           ss.getRange(i+2, 4).setValue(loc);
+           ss.getRange(i+2, 5).setValue(dcp);
+           
+           
+           Logger.log(title);
+    
+}
+}
