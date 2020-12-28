@@ -1,0 +1,6 @@
+if(j < split.length-1){
+        Locatethai = Locatethai+LanguageApp.translate(split[j],'en','th')+','; 
+      }
+      else{
+        Locatethai = Locatethai+LanguageApp.translate(split[j],'en','th') ; 
+      }
