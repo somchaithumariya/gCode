@@ -1,0 +1,24 @@
+function minuteCal(){
+let time_start = '7/12/2020 ,15:45:57'
+let time_end = '7/12/2020 ,15:55:30'
+
+const format_date = date =>{
+  let d = date.split(' ')
+  let t = d[1]
+  d = d[0].split('/')
+  
+  d = new Date(`${d[1]}/${d[0]}/${d[2]} ,${t}`)
+  return d
+}
+
+time_start = format_date(time_start)
+
+time_end = format_date(time_end)
+let diff = Math.floor((time_end - time_start)/(1000*60))
+
+if(diff >=30) {
+  //เรียกฟังก์ชันส่ง nitify เลยครับ
+}
+
+}
+ฟังชั่นการหาเวลาจากวันที่ต่างกันเป็นนาที จากท่านดรัณฝากสมาชิกทดสอบด้วยนะครับ
