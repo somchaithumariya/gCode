@@ -1,0 +1,10 @@
+function myFunction() {
+  
+  var ss = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Sheet1")
+  var index_row = ss.getLastRow();
+  
+  ss.getRange("D" + index_row).setFormula("=round(B" + index_row + "/(C" + index_row + "*C" + index_row + "/100/100),1)")
+  ss.getRange("E" + index_row).setFormula("=if(and(D" + index_row + ">=Sheet2!$A$2,D" + index_row + "<Sheet2!$B$2),1,if(and(D" + index_row + ">=Sheet2!$A$3,D" + index_row + "<Sheet2!$B$3),2,if(and(D" + index_row + ">=Sheet2!$A$4,D" + index_row + "<Sheet2!$B$4),3,if(and(D" + index_row + ">=Sheet2!$A$5,D" + index_row + "<Sheet2!$B$5),4,if(and(D" + index_row + ">=Sheet2!$A$6,D" + index_row + "<Sheet2!$B$6),5,0)))))")
+  ss.getRange("F" + index_row).setFormula("=VLOOKUP($E" + index_row + ",Sheet2!C:D,2,false)")
+  
+}
