@@ -1,0 +1,56 @@
+function myFunction() {
+  var token = "9maoKYHzzO14CjZKq2KJyaffhRacSTwFUMHJIQb8dOF";
+  var webURL = "https://weather.com/weather/today/l/14.98,102.09?par=google&temp=c";
+  var response = UrlFetchApp.fetch(webURL);
+
+  var $ = Cheerio.load(response.getContentText()); 
+  var now = $('.TodayDetailsCard--feelsLikeTemp--2GFqN').eq(0).text().trim().slice(0,3);
+  var sun = $('.SunriseSunset--sunriseDateItem--2ATeV').eq(0).text().trim();
+  var moon = $('.SunriseSunset--dateValue--2nwgx').eq(1).text().trim();
+  var high_low = $('.WeatherDetailsListItem--wxData--23DP5').eq(0).text().trim();
+  var wind = $('.WeatherDetailsListItem--wxData--23DP5').eq(1).text().trim();
+  var Humidity = $('.WeatherDetailsListItem--wxData--23DP5').eq(2).text().trim();
+  var dew_point = $('.WeatherDetailsListItem--wxData--23DP5').eq(3).text().trim();
+  var pressure = $('.WeatherDetailsListItem--wxData--23DP5').eq(4).text().trim();
+  var uv = $('.WeatherDetailsListItem--wxData--23DP5').eq(5).text().trim();
+  var visibility = $('.WeatherDetailsListItem--wxData--23DP5').eq(6).text();
+  var moon_phase = $('.WeatherDetailsListItem--wxData--23DP5').eq(7).text();
+  //var forecast = $('.Column--column--2bRa6').eq(1).text().trim();
+  //var test =   $('.removeIfEmpty').text();
+  //Logger.log(now); 
+  //for (var i in wind)
+  //{ d6oYI2gRIW0aF3mamtTwZ0bZqkIbw41HiDQNwMSyrFC ทดสอบระบบ
+ // i = wind;
+ // Logger.log('\n'+i);
+  //sendLineNotify(message, token);
+  //}
+ var message = '\n'+'🌏 ระบบพยากรณ์อากาศ'+'\n'
+                + "🌤️ อุณหภูมิปัจจุบัน: "+ now +'\n'
+                + "⬆️⬇️ สูงสุด/ต่ำสุด: "+ high_low+'\n'
+                + "🏙️ พระอาทิตย์ขึ้น: "+ sun +'\n'
+                + "🌃 พระอาทิตย์ตก: "+ moon +'\n'
+                + "🎏 แรงลม: "+ wind+'\n'
+                + "☔️ ความชื้น: "+ Humidity+'\n'
+                + "💧 จุดน้ำค้าง: "+ dew_point+'\n'
+                + "🌎 ความดันอากาศ: "+ pressure+'\n'
+                + "☀️ ดัชนี UV: "+ uv+'\n'
+                + "🌄 วิสัยทัศน์: "+ visibility+'\n'
+                //+ "วันนี้: "+ forecast+'\n'
+                + "🌓🌗 ข้างขึ้น-ข้างแรม: "+ moon_phase+'\n'
+                + "📍 ที่มา: weather.com"+'\n'
+                + "🖥️ IT ACN";
+  //var message = emailBody;
+  sendLineNotify(message, token);
+  }
+function sendLineNotify(message, token){
+  var options =
+   {
+     "method"  : "post",
+     "payload" : 
+     {
+       "message" : message,
+     },
+     "headers" : {"Authorization" : "Bearer " + token}
+   };
+   UrlFetchApp.fetch("https://notify-api.line.me/api/notify", options);
+}
