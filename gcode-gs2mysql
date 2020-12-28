@@ -1,0 +1,17 @@
+var DB_SERVER = "xxx";  // abc.xxx.com
+var DB_NAME = "xxx";
+var DB_USERNAME = "xxx";
+var DB_PASSWORD = "xxx";
+var DB_PORT = "xxx";  // port number
+
+function myFunction() {
+
+  var url = "jdbc:mysql://" + DB_SERVER +  ":" + DB_PORT + "/" + DB_NAME;
+  var conn = Jdbc.getConnection(url, DB_USERNAME, DB_PASSWORD);
+  var stmt = conn.createStatement();
+  var rst = stmt.execute("create table test1 (id int, firstname varchar(10))");
+  conn.close();
+  
+}
+
+share code ค่ะ เผื่อใครสนใจใช้ google script ติดต่อกับ mysql
