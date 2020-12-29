@@ -1,0 +1,25 @@
+//Title//
+=cell*n //กำหนดเซลคูณจำนวน
+=arrayformula(cell*n) //คำนวณแค่เซล
+
+=arrayformula(rangecell:column*n) //คำนวณไปเรื่อยทั้งคอลัมน์
+
+//1// 
+=arrayformula(if(isblank(rangecell:column),"",rangecell:column*n)) //
+
+//2//
+=arrayformula(if(len(rangecell:column)<>0,rangecell:column*n,"")) //
+
+//3//
+=arrayformula(if(rangecell:column="","",rangecell:column*n)) //
+
+//4//
+=arrayformula(if(row(rownumber:rowcolumn)=1,"n",if(rownumber:rowcolumn="","",rownumber:rowcolumn*n))) //
+
+//5//
+={"n";arrayformula(if(rangecell:column="","",rangecell:column*n))} //
+
+={"n";arrayformula(if(rangecell:column="","",rangecell:column*n))} //ถ้าต้องการล็อคเซลล็อคคอลัมน์ โดยการกด F4 ให้มีการใส่เครื่องหมายสตริง $
+
+
+สูตร arrayformula ทำสูตรคูณ ลิงค์ดูคลิปสอนของครูอภิวัฒน์ วงศ์กัณหา ตามนี้ https://youtu.be/DjgxWWofJbg
