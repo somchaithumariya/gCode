@@ -1,0 +1,20 @@
+function myFunction() {
+  var sheet = SpreadsheetApp.getActiveSheet()
+  sheet.appendRow(["ชื่อไฟล์", "URL", "ดาวน์โหลด", "รูปภาพ"])
+  var folder = DriveApp.getFolderById('xxxxx')
+  var allFiles = folder.getFiles()
+  var i = 0
+  var file
+
+  while (allFiles.hasNext()) {
+    file = allFiles.next()
+    i++
+    data = [
+      file.getName(),
+      file.getUrl(),
+      "http://doc.google.com/uc?export=download&confirm=no_antivirus&id=" + file.getId(),
+      "=image(\"http://drive.google.com/uc?view&id=" + file.getId() + "\")"
+    ]
+    sheet.appendRow(data)
+  }
+}
