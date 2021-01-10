@@ -1,0 +1,12 @@
+// สคริปท์ ค้นหาข้อมูลแยกรายละเอียด
+// เรียกว่า user define functions คือฟังก์ชั่นที่ออกแบบเอง และส่งค่ากลับเข้าชีท
+
+function class_split(range,index){
+  range = range.filter(row => row[0].indexOf(index) > -1)
+  return range
+}
+
+
+// สูตรวางลงในชีท
+
+=class_split(A1:A,"อ1")
