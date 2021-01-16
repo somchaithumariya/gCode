@@ -1,0 +1,20 @@
+ของฝากยามเช้า ที่ต้องการ copy Cellและสูตรต่าง ๆ บน google sheets Cr.pomarpeggio
+//copyformula
+function copyformula() {  
+
+ // sheet ที่เป็นฟอร์มตอบกลับ
+  var activeSheet1 = SpreadsheetApp.getActive().getSheetByName('การตอบแบบฟอร์ม 1');   
+ // sheet ปลายทางที่ต้องการ copy สูตรเพื่อให้จำนวนแถวเท่ากับฟอร์มต้นทาง
+ // var activeSheet2 = SpreadsheetApp.getActive().getSheetByName('eval'); 
+
+  var cell = activeSheet1.getRange("r2:ab2");// ช่วงที่ต้องการ copy สูตร
+ // var cell = activeSheet2.getRange("A2:T2");// ช่วงที่ต้องการ copy สูตร
+  var col = cell.getColumn() ;
+  var row = cell.getRow();
+  var destination = activeSheet1.getRange(row, col, activeSheet1.getLastRow()-1, 1);
+  //var destination = activeSheet2.getRange(row, col, activeSheet1.getLastRow()-1, 1);
+  //var destination = activeSheet2.getRange(origin);
+  cell.copyTo(destination)  ;
+  // เสร็จแล้วไปตั้ง trigger เลือกเป็นชนิด on form submit
+  
+}
