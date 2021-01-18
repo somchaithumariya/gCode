@@ -1,0 +1,26 @@
+function onEdit(e){
+    addTimestamp(e) ;
+}
+
+
+function addTimestamp(e){
+    //ตั้งค่าตัวแปร
+    var startRow = 1;
+    var targetColumn = 3;
+    var ws = "dataobby";
+    
+    //เมื่อแก้ไขแถวและคอลัมน์
+    var row = e.range.getRow();
+    var col = e.range.getColumn();
+    
+    
+    if(col === targetColumn && row > startRow && e.source.getActiveSheet().getName() === ws) {
+
+    var currentDate = new Date();
+    e.source.getActiveSheet().getRange(row,5).setValue(currentDate);
+    if(e.source.getActiveSheet().getRange(row,4).getValue() == ""){
+    e.source.getActiveSheet().getRange(row,4).setValue(new Date());
+  
+   } //สิ้นสุดการตรวจสอบว่ามีวันที่สร้างหรือไม่
+  }//สิ้นสุดการตรวจสอบ คอลัมน์ แถว  และแผ่นงาน
+}//สิ้นสุดการตรวจสอบ function addTimestamp
