@@ -1,0 +1,7 @@
+คูณร่วมน้อย (ครน) Least Common Multiple (LCM)
+จงหา ครน ของ 2,4,8
+=LCM(2,4,8,)
+
+หารร่วมมาก (หรม) Greatest Common Divisor (GCD)
+จงหา หรม ของ 2,4,8
+=GDC(2,4,8)
