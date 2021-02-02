@@ -1,0 +1,13 @@
+=LEN(TRIM(A1))-LEN(SUBSTITUTE(TRIM(A1),",",""))+1
+
+
+อีกวิธีครับอาจาร  
+=columns(split(a1,","))
+
+หรือ
+
+=counta(split(a1,","))
+
+
+A1/B1
+a001,a002,a003/3
