@@ -1,0 +1,4 @@
+var date = Utilities.formatDate(new Date(), 'GMT+7', 'dd/MM/');
+var thaiyear = Number(Utilities.formatDate(new Date(), "GMT+7", "yyyy"))+543;
+  
+var today = 'วันที่ '+date+thaiyear;
