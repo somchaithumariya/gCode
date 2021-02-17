@@ -1,0 +1,18 @@
+function removeDups(){
+  const ss = SpreadsheetApp.getActive();
+  const sh = ss.getSheets()[0];
+  const rng = sh.getRange("A2:C"+sh.getLastRow());
+  const raw_data = rng.getValues().reverse();
+  rng.setValues(raw_data);
+  rng.removeDuplicates([1,2]);
+  const sorted_rng= sh.getRange("A2:C"+sh.getLastRow());
+  const sorted_data = sorted_rng.getValues().reverse();
+  sorted_rng.setValues(sorted_data);  
+}
+
+
+ var response = UrlFetchApp.fetch('https://spreadsheets.google.com/feeds/list/1HSgozwzG-klwdxxxxxxxxxxxxxxxxxalt=json', {
+        muteHttpExceptions: true
+      });
+      if (200 == response.getResponseCode()) {
+        var myObj = JSON.parse(response.getContentText());
