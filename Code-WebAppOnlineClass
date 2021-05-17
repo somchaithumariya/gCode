@@ -95,6 +95,7 @@ function include(filename){
 -----------------
 
 
+<style>
 *{
     padding: 0;
     margin: 0;
@@ -204,3 +205,4 @@ h1::after{
     background: #f44336;
     color: fff;
 }
+</style>
