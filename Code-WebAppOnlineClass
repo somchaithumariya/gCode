@@ -12,21 +12,23 @@ function include(filename){
 
 <!DOCTYPE html>
 <html>
-
 <head>
     <base target="_top">
-    <link rel="stylesheet" href="style.css">
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <?!=include('css')?> 
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Athiti:wght@500&display=swap" rel="stylesheet">   
 </head>
 <body>
     <div class="hero">
-        <h1>บทเรียนเรียนออนไลน์ ครูอภิวัฒน์ วงศ์กัณหา</h1>
+        <h1>บทเรียนเรียนออนไลน์ ครูสมชาย ทุมอาริยะ</h1>
         <div class="review-box">
             <div id="slide">
                 <div class="card">
                     <div class="profile">
-                        <img src="images/p1.jpg">
+                        <img src="http://drive.google.com/uc?id=1j7TiQY8i4f0USxCArPS2Sl1UwXMs9rPM">
                         <div>
-                         <h3>หัวข้อหลัก</h3>
+                         <h3>หัวข้อหลัก1</h3>
                          <p>หัวข้อรอง</p>
                         </div>
                     </div>
@@ -34,9 +36,9 @@ function include(filename){
                 </div>
                 <div class="card">
                     <div class="profile">
-                        <img src="images/p2.jpg">
+                        <img src="http://drive.google.com/uc?id=1NDWtugNBLgMPkIEriSd0_kl0KoSo5tl0">
                         <div>
-                         <h3>หัวข้อหลัก</h3>
+                         <h3>หัวข้อหลัก2</h3>
                          <p>หัวข้อรอง</p>
                         </div>
                     </div>
@@ -44,9 +46,9 @@ function include(filename){
                 </div>
                 <div class="card">
                     <div class="profile">
-                        <img src="images/p3.jpg">
+                        <img src="http://drive.google.com/uc?id=1nDSd_7hV3MLxj7N56FD0DhALoES-vbWW">
                         <div>
-                         <h3>หัวข้อหลัก</h3>
+                         <h3>หัวข้อหลัก3</h3>
                          <p>หัวข้อรอง</p>
                         </div>
                     </div>
@@ -54,19 +56,28 @@ function include(filename){
                 </div>
                  <div class="card">
                     <div class="profile">
-                        <img src="images/p4.jpg">
+                        <img src="http://drive.google.com/uc?id=1vnp33TMjDuXXyLC2D4MBcqbA9x4otBmD">
                         <div>
-                         <h3>หัวข้อหลัก</h3>
+                         <h3>หัวข้อหลัก4</h3>
                          <p>หัวข้อรอง</p>
                         </div>
                     </div>
                     <p>เนื้อหา</p>
                 </div>  
-
+                 <div class="card">
+                    <div class="profile">
+                        <img src="http://drive.google.com/uc?id=1wVmHvB9Kd6ovYp-2aBHaNEj8aej1Y-Y4">
+                        <div>
+                         <h3>หัวข้อหลัก5</h3>
+                         <p>หัวข้อรอง</p>
+                        </div>
+                    </div>
+                    <p>เนื้อหา</p>
+                </div>
             </div>
             <div class="sidebar">
-                <img src="images/up-arrow.png" id="upArrow">
-                <img src="images/down-arrow.png" id="downArrow">
+                <img src="http://drive.google.com/uc?id=10rVxxtxO4cogWFAi4p2Zu5vdfAzdjhlv" id="upArrow">
+                <img src="http://drive.google.com/uc?id=1WE1xymXwqlP7yh5f6Hs46S3o87HLhxO0" id="downArrow">
             </div>
         </div>
     </div>
@@ -99,7 +110,7 @@ function include(filename){
 *{
     padding: 0;
     margin: 0;
-    font-family: sans-serif;
+    font-family: 'Athiti', sans-serif;
 }
 
 .hero{
