@@ -1,0 +1,12 @@
+function formTimer() {
+  var now = new Date();
+  var start = new Date("23/05/2021 10:00");
+  var stop = new Date("23/05/2021 10:03");
+  FormApp.getActiveForm().setAcceptingResponses(now > start && now < end);
+}
+
+
+-------------------------
+
+
+tricker == minute
