@@ -1,0 +1,75 @@
+code.gs
+----------------------------------------
+function doGet(e) { // main function
+  var template = HtmlService.createTemplateFromFile('index.html'); // filename always!
+  return template.evaluate().setTitle('Search Drive').setSandboxMode(HtmlService.SandboxMode.IFRAME);
+}
+
+// Process the form
+function processForm(searchTerm) {
+  var resultToReturn;
+  Logger.log('processForm was called! ' + searchTerm);
+  resultToReturn  = SearchFiles(searchTerm); // Call to the search files function to search files on google drive
+  Logger.log('resultToReturn: ' + resultToReturn);
+  return resultToReturn; // return the results
+}
+
+function SearchFiles(searchTerm) {
+  var searchFor ="title contains '" + searchTerm + "'"; //single quotes are needed around searchterm
+  var owneris ="and 'YOUREmail@email.com' in Owners"; //email address to search for 
+  var names = [];
+  Logger.log(searchFor + " " + owneris);
+  var files = DriveApp.searchFiles(searchFor + " " + owneris); 
+  while (files.hasNext()) {
+    var file = files.next();
+    var fileId = file.getId();// To get FileId of the file
+    var lm = file.getLastUpdated();
+    var name = file.getName()+"|~|"+fileId+"|~|"+lm; // Im concatenating the filename with file id separated by |~|
+    names.push(name); // adding to the array
+  }
+  return names; // return results
+}
+
+index.html
+-------------------------------------
+We just launched a new product: Collectives on Stack Overflow. How do they work? Listen to learn more.
+Join Stack Overflow to learn, share knowledge, and build your career.
+
+ 
+<html>
+  <head>
+    <base target="_top">
+    <script>
+      function displayMessage() {
+        var searchTerm;
+        searchTerm = document.getElementById('idSrchTerm').value;
+        console.log('searchTerm: ' + searchTerm );
+        // Below call means: call to processForm passing the searchTerm value (previously escaped) and after finish call the handleResults function
+         google.script.run.withSuccessHandler(handleResults).processForm(searchTerm.replace("'","\'")); 
+       }
+         
+        
+      function handleResults(results){
+         console.log('Handle Results was called! ');
+         document.writeln('<a href="https://script.google.com/macros/s/AKfycbyy36tAbouSL00TpZTHkCwrAY2aus1-6UnEPJTk__w2HTv5iXbkeCD6DYrh-Nj0L5_9/exec">กลับหน้าค้นหา</a><br/><br/>');
+         var length=results.length; // total elements of results
+         for(var i=0;i<length;i++)
+         {
+         var item=results[i];
+         item=item.split("|~|"); // split the line |~|, position 0 has the filename and 1 the file id
+         
+         document.writeln("<b><a href='https://docs.google.com/document/d/"+item[1]+"' target='_blank'>"+item[0]+"</b></a> (Last modified: "+item[2]+")<br/><br/>"); // write result
+        
+        }
+        document.writeln("สิ้นสุดการค้นหา ได้ผล...");
+       }
+
+
+    </script>
+  </head>
+  <body><center><br/>
+    Search: <input type="text" id="idSrchTerm" name="search">
+    <input type="button" value="ค้นหาไฟล์บน Google Drive" name="submitButton" onclick="displayMessage()"/>
+</center>
+  </body>
+</html>
