@@ -1,0 +1,111 @@
+------------------------------------------------
+code.gs
+------------------------------------------------
+function doGet(e){
+   var serveFile = e.parameter.servefile;
+   var id = e.parameter.id;
+   
+   if(serveFile)
+   {
+     return downloadFile(id); // and Hyde
+   }
+   
+  return HtmlService.createHtmlOutputFromFile('form.html'); // Jekyll
+}
+
+function fetchFromGoogleDrive() { // Jekyll
+  var fileslist = DriveApp.searchFiles("your search criteria goes here + and trashed = false"); // the 'and trashed = false' prevents the same file being download more than once
+  
+  if (fileslist.hasNext()) {
+    var afile = fileslist.next();
+    var html = ScriptApp.getService().getUrl()+"?servefile=true&id="+afile.getId();
+    return html;
+  }
+  else
+  {
+    return '';
+  }
+}
+   
+function downloadFile(id){ // and Hyde  
+  try
+  {
+    var afile = DriveApp.getFileById(id);
+  
+    var aname = afile.getName();
+    var acontent = afile.getAs('text/plain').getDataAsString();
+    
+    var output = ContentService.createTextOutput();
+    output.setMimeType(ContentService.MimeType.CSV);
+    output.setContent(acontent);
+    output.downloadAsFile(aname);
+    afile.setTrashed(true);
+    return output;
+  }
+  catch (e) {
+    return ContentService.createTextOutput('Nothing To Download')
+  }
+}
+
+------------------------------------------------
+form.html
+------------------------------------------------
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <script>
+    
+    setInterval(
+    function () 
+    { 
+      document.getElementById('messages').innerHTML = 'Event Timer Fetching';
+      google.script.run
+        .withSuccessHandler(onSuccess)
+        .withFailureHandler(onFailure)
+        .fetchFromGoogleDrive();
+    }, 60000);
+    
+    function callFetchGoogleDrive() {
+      document.getElementById('messages').innerHTML = 'Fetching';
+      google.script.run
+        .withSuccessHandler(onSuccess)
+        .withFailureHandler(onFailure)
+        .fetchFromGoogleDrive();   
+    }
+      
+    function onSuccess(sHref) 
+    {
+      if(new String(sHref).valueOf() == new String("").valueOf())
+      {
+        document.getElementById('messages').innerHTML = 'Nothing to download';
+      }
+      else
+      {
+        document.getElementById('messages').innerHTML = 'Success';
+        document.getElementById('HiddenClick').href = sHref;
+        document.getElementById('HiddenClick').click(); // Must enable Pop Ups for https://script.google.com
+      }
+    }
+    
+    function onFailure(error) 
+    {
+      document.getElementById('messages').innerHTML = error.message;
+    }
+    
+    </script>
+  </head>
+  <body>
+    <div id="messages">Waiting to DownLoad!</div>
+    <div>
+      <a id="HiddenClick" href="" target="_blank" onclick="google.script.host.close" style="visibility: hidden;">Hidden Click</a>
+    </div>
+    <div>
+      <button type="button" onclick='callFetchGoogleDrive();' id="Fetch">Fetch Now!</button> 
+    </div>
+  </body>
+</html>
+
+----------------------------
+ที่มาครูสมชายคัดมาจาก: https://sodocumentation.net/google-apps-script/topic/8212/google-web-app-script-to-auto-download-from-google-drive
+----------------------------
