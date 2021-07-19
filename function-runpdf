@@ -1,0 +1,17 @@
+function runPDF(){
+ let sheetId = 'xxxxxx' // ไอดีของ sheet
+ let tmpFileId = 'yyyyyyyy' // ไอดีของ slide
+ let pdfFolder = DriveApp.getFoldersByName('PDF-Files').next() // โฟลเดอร์เก็บไฟล์ PDF
+ let templateFile = DriveApp.getFileById(tmpFileId)
+ let data =PdfService.initData(sheetId, 'แผ่น1')
+ let date = data[0]['วัน/เดือน/ปี'].split('-')
+ data[0]['วัน/เดือน/ปี'] = LanguageApp.translate(Utilities.formatDate(new Date(date[0],+(date[1])-1,date[2]),"GMT+7", "dd MMMM yyyy"),'en','th')
+ let option = {
+  pdfFolder: pdfFolder,
+  templateFile: templateFile,
+  data: data,
+  image_column: ['รูปภาพ'], // ชื่อคอลัมภ์รูปภาพ
+  fileName: ['ชื่อ-สกุล'] // ชื่อไฟล์ PDF
+}
+  PdfService.createPDFFromSlide(option)
+}
