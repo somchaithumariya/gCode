@@ -1,0 +1,13 @@
+var name = 'xxx' //newRow[0]
+var course = 'xxx' //newRow[4]
+sendnotify(name,course)
+
+function sendnotify(name,course){
+  var token = 'xxx' // ใส่โทเคนไอดี
+  var msg = 'มีคนมาสมัครเข้าใหม่ ชื่อ '+name+ 'หลักสูตร' +course  
+  NotifyApp.sendNotify(token,msg)
+}
+
+
+------------------------------
+Library Line ID = 1vXbZfRP-7AqwqV7k0fGAnVjCe34pYyI2WdZBJw1Y8U0_DuEbo5fN32P9
