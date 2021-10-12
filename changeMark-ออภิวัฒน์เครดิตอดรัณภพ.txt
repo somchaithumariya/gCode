@@ -1,0 +1,16 @@
+function myFunction() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0]
+  var data = ss.getRange('E2:X69').getValues()
+  //Logger.log(data)
+  var indexObj ={ ก: "1",  ข: "2",  ค: "3",  ง: "4"  }
+  data = data.map((row,i)=>{
+    row = row.map(col=>{
+      col = col.split(".")[0]
+      return indexObj[col]
+    })
+    return [("0000"+(i+1)).slice(-4)+" "+row.join("")]
+  })
+//Logger.log(data)
+ var newsheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[1]
+ newsheet.getRange(newsheet.getLastRow()+1,1,data.length,data[0].length).setValues(data)
+}
