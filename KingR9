@@ -1,0 +1,433 @@
+#####################################
+code.gs
+#####################################
+//พัฒนาเพิ่้มเติม By Gukkghu Dev 
+function doGet(e) {
+  if (!e.parameter.page || e.parameter['page'] == 'page') {
+    var htmlOutput = HtmlService.createTemplateFromFile('page')
+    return htmlOutput.evaluate()
+      .setTitle("วันสวรรคต13ตค")
+      .addMetaTag('viewport', 'width=device-width , initial-scale=1')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+  } else if (e.parameter['page'] == 'index') {
+    var htmlOutput = HtmlService.createTemplateFromFile('index');
+    return htmlOutput.evaluate()
+      .setTitle("ลงนาม")
+      .addMetaTag('viewport', 'width=device-width , initial-scale=1')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+  }
+}
+
+
+function getUrl() {
+  var url = ScriptApp.getService().getUrl()
+  return url
+}
+
+
+function include(filename) {
+  return HtmlService.createHtmlOutputFromFile(filename).getContent()
+}
+
+function saveData(encodeImage,data){
+     var ss = SpreadsheetApp.getActiveSpreadsheet();
+     var wss = ss.getSheetByName("AddData");
+      
+    const dataimgsig = encodeImage.split(",")[1];
+    const dataimgsigdecode = Utilities.base64Decode(dataimgsig);
+    console.log(dataimgsigdecode) 
+    const sigPictureblod = Utilities.newBlob(dataimgsigdecode).setName(data.fname+".png");
+    Logger.log(sigPictureblod)
+    var pic = DriveApp.getFolderById("1AuheNLoHRb-LFr4qbsB1pD0Qh0gd177e").createFile(sigPictureblod);//แก้ไข folder ลายเซนต์
+    var BlobID = pic.getId()
+    var image_url = "http://drive.google.com/uc?id=" + BlobID
+
+
+     wss.appendRow([new Date(),
+                    data.fname ,
+                    data.lname , 
+                    image_url
+                    ]);
+     
+
+}
+
+function getPicture(){
+     var ss = SpreadsheetApp.getActiveSpreadsheet();
+     var wss = ss.getSheetByName("Picture");
+     var dataPicture = wss.getRange(3, 3, 3, 1).getValues()
+
+
+     var arraypicture = [dataPicture[0],dataPicture[1],dataPicture[2]]
+    //  Logger.log(arraypicture[1])
+    return arraypicture
+
+
+
+}
+
+#####################################
+page.html
+#####################################
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Charm:wght@700&display=swap" rel="stylesheet">
+
+<style>
+
+    .Charm {
+    font-family: 'Charm', cursive;
+    }
+
+    body { font-family: 'Charm', cursive;
+        font-size: 2rem;
+    }
+    /* button 1 */
+    button {
+        font-family: 'Charm', cursive;
+        position: absolute;
+        padding: 20px 50px;
+        cursor: pointer;
+        border: 0px solid #ced4da00;
+        background: transparent;
+        position: relative;
+        margin: 20px;
+        transition: all 0.25s ease;
+            font-size: 20px;
+    }
+
+
+    .btn-4 {
+        color: #fff;
+        overflow: hidden;
+        border-radius: 30px;    
+        box-shadow: rgba(39,200, 255, 0.5),
+        0px 0px 0px 0px rgba(39, 200, 255, 0.5);
+    }
+    .btn-4:hover {
+        transform: translate(0, -6px);
+        box-shadow: 10px -10px 25px 0px rgba(143, 64, 248, 0.5)
+        ,-10px 10px 25px 0px rgba(39, 200, 255, 0.5);
+
+    }
+    .btn-4:hover::after{
+        transform: rotate(150deg);     
+
+    }
+    .btn-4::after {
+        content: "";
+        width: 400px;
+        height: 400px;
+        position: absolute;
+        top: -50px;
+        left: -100px;
+        background-color: #ff3cac;
+        background-image: linear-gradient(255deg, #27d86c 0%,
+        #26caf8 50%, #c625d0 100%);
+        z-index: -1;
+        transition: all 0.25s ease;
+    }
+
+
+body, html {
+  height: 100%;
+  margin: 0.1%;
+  top: 0.8%;
+
+}
+
+.bg {
+  /* The image used */
+  background-image: url("https://sv1.picz.in.th/images/2021/10/08/u7yqgq.png");
+  
+  width: 85%;
+  /* Full height */
+  height: 1024px; 
+  bottom: 0.1%;
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+h6 {
+    display: block;
+    font-size: 0.67em;
+    margin-block-start: 0.2em;
+    margin-block-end: 2.33em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+}
+
+</style>
+</head>
+<body>
+
+<center><div class="bg mt-3 ms-5"></div></center>
+
+
+<?var url = getUrl();?>
+<center><button class="btn-4" onclick="location.href='<?=url?>?page=index'">ลงนาม</button></center>
+<!-- <center><button class="btn-4"><a href="<?=url?>?page=index3">ร่วมลงนาม</a></button></center> -->
+    <center><h6 style="color: #DAA520">“ขอน้อมเกล้าฯ ถวายอาลัย ส่งเสด็จสู่สวรรคาลัย 
+ด้วยเกล้าด้วยกระหม่อม ขอเดชะ”</h6></center> 
+    <center><h6 style="color: #DAA520">พระบาทสมเด็จพระบรมชนกาธิเบศร มหาภูมิพลอดุลยเดชมหาราช บรมนาถบพิตร เนื่องในโอกาสวันคล้ายวันสวรรคต วันที่ ๑๓ ตุลาคม ๒๕๖๔  </h6></center>
+    <center><h6 style="color: #DAA520">อ้างอิงตามเอกสารออนไลน์ ที่ได้มาจาก: <a href=https://themomentum.co/momentum-feature-thai-royal-language/>https://themomentum.co/momentum-feature-thai-royal-language/</a></h6></center>
+    
+</body>
+</html>
+
+#####################################
+index.html
+#####################################
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Charm:wght@700&display=swap" rel="stylesheet">
+  <style>
+
+.Charm {
+  font-family: 'Charm', cursive;
+}
+
+body { font-family: 'Charm', cursive;
+       font-size: 2rem;
+ }
+
+    
+    <!-- JavaScript Bundle with Popper -->
+    
+        @page {
+            size: landscape;
+        }
+      canvas#signature {
+      background-color: #fff0;
+      width: 40%;
+      height: 8%;
+      color: #a95909;
+
+    }
+
+    </style>
+    <title>Document</title>
+</head>
+
+
+
+<body>
+    <div class="container">
+      <div class="container-fluid">
+        <div class="printable">
+            <div class="row justify-content-center mt-4">
+                <div class="col text-center">
+                    <img id="pic" src="https://sv1.picz.in.th/images/2021/10/08/u7yqgq.png" class="img-fluid" alt="วันคล้ายวันสวรรคต ร.๙" width="600" height="800">
+                </div>
+            </div>
+            <div class="row none-printable justify-content-center">
+                <div class="col text-center">
+              <button id="btn-1" class="btn btn-success"> 1</button>
+              <button id="btn-2" class="btn btn-warning"> 2</button>
+              <button id="btn-3" class="btn btn-info"> 3</button>  
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col text-center">
+                    <img src="https://www.img.in.th/images/077b51842c39ee1af412460c63f1ff15.png" alt="วันคล้ายวันสวรรคต" width="200" height="50">
+                </div>
+            </div>
+            <div class="row justify-content-center mt-3">
+                <div class="col text-center">
+                    <p style="color: #DAA520" >ด้วยเกล้าด้วยกระหม่อมขอเดชะ</p>
+                    <p style="color: #DAA520" >ข้าพระพุทธเจ้า</p>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col text-center">
+                    <img src="https://www.img.in.th/images/c6f4ca22891948c79812fbc96f4f0204.png" alt="วันคล้ายวันสวรรคต" width="200" height="50">
+                </div>
+            </div>
+            <div class="row justify-content-center mt-4 hide">
+                <div class="col text-center">
+                  
+                    <h3 style="color: #DAA520" id="text-name"></h3>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="row justify-content-center none-printable">
+            <div class="row justify-content-center">
+                <div class="col-md-4">
+                    <div class="form-floating">
+
+                        <input style="color: #DAA520" class="form-control" type="text" id="fname" name="fname" placeholder="ชื่อ">
+                        <label style="color: #DAA520" class="fs-6" for="fname">ชื่อ:</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center mt-3">
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input style="color: #DAA520" class="form-control" type="text" id="lname" name="lname" placeholder="นามสกุล">
+                        <label style="color: #DAA520" class="fs-6" for="lname">นามสกุล:</label>
+                    </div>
+                </div>
+            </div>
+          </div>
+
+            <div class="row justify-content-center mt-4">
+              <div class="col text-center">
+                <div class="rounded">
+                  <canvas style="border:1px solid #DAA520; border-left-color: transparent; border-right-color: transparent; border-top-color: transparent" id="signature" name="signature" ></canvas>
+                </div>
+              </div>
+            </div>
+
+            <div class="row justify-content-center mt-4">
+                <div class="col text-center">
+                    <!-- <p class="text-primary fw-bold">สิ่งที่จะให้แสดงออกมาทางหน้าจอ แต่ว่าไม่เห็นเวลา Print หน้านี้ออกมา</p> -->
+                </div>
+            </div>
+
+            <div class="row none-printable">
+                <div class="col text-center">
+  <input type="button" class="btn btn-info" name="clear-signature" id="clear-signature" value="ลบลายเซ็นต์">
+  <input type="button" class="btn btn-warning" name="print_bt" id="print_bt" value="พิมพ์" onclick="printpage();">              
+                </div>
+            </div>
+
+        </div>
+      </div>
+    </div>
+  
+    <script>
+        function printpage() {
+
+            let fname = $('#fname').val()
+            let lname = $('#lname').val()
+
+            if(fname=="" || lname ==""  ){ 
+               
+                Swal.fire({
+                  position: 'center',
+                  icon: 'warning',
+                  title: 'ตรวจสอบชื่อสกุล',
+                  showConfirmButton: false,
+                  timer: 1500
+                })
+                return false}
+          $('.none-printable').hide()
+            
+            $('#text-name').html(`${fname}  ${lname}`).show()
+
+            window.print();
+            $('#text-name').hide()
+            $('.none-printable').show()
+            save()
+
+        }
+   
+
+        let btn1 = document.querySelector('#btn-1');
+        let btn2 = document.querySelector('#btn-2');
+        let btn3 = document.querySelector('#btn-3');
+        
+        btn1.addEventListener('click',()=> {
+            google.script.run.withSuccessHandler(getpicA).getPicture();
+        });
+
+        btn2.addEventListener('click',()=> {
+            google.script.run.withSuccessHandler(getpicB).getPicture();
+        });
+
+        btn3.addEventListener('click',()=> {
+            google.script.run.withSuccessHandler(getpicC).getPicture();
+        });
+
+function getpicA(arraypicture) {
+    var pica = arraypicture[0] 
+    console.log(pica)
+    document.getElementById("pic").src = pica
+}
+function getpicB(arraypicture) {
+    var picb = arraypicture[1] 
+    console.log(picb)
+    document.getElementById("pic").src = picb
+}
+function getpicC(arraypicture) {
+    var picc = arraypicture[2] 
+    console.log(picc)
+    document.getElementById("pic").src = picc
+}
+
+function save(){
+          var data = {}
+            data.fname = document.getElementById("fname").value;
+            data.lname = document.getElementById("lname").value;
+            var imgdata = signaturePad.toDataURL();
+            console.log("test  "+imgdata)
+            google.script.run.saveData(imgdata,data);
+            document.getElementById("fname").value="";
+            document.getElementById("lname").value="";
+                Swal.fire({
+                  position: 'center',
+                  icon: 'success',
+                  title: 'ขอบคุณที่ร่วมกิจกรรมดีๆ กับเรา',
+                  showConfirmButton: false,
+                  timer: 1500
+                })
+}
+
+
+
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@3.0.0-beta.4/dist/signature_pad.umd.min.js"
+    integrity="sha256-XEJuxxEh99IMbq0rzl1zKwjjfYc/nrkRgKjWM6bSwuU=" crossorigin="anonymous"></script>
+  <script>
+    var canvas = document.querySelector("canvas");
+    var signaturePad = new SignaturePad(canvas, {
+  backgroundColor: "rgb(255,255,255,0)",
+  penColor: "#DAA520",
+  
+});
+
+ $('#clear-signature').on('click',()=> {
+  event.preventDefault()
+ signaturePad.clear();
+
+})
+
+function resizeCanvas() {
+  console.log(window.devicePixelRatio )
+    var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+    canvas.width = canvas.offsetWidth * ratio ;
+    if(ratio >2)  canvas.height = canvas.offsetHeight * ratio *1.5;
+    else canvas.height = canvas.offsetHeight * ratio;
+    canvas.getContext("2d").scale(ratio, ratio);
+    signaturePad.clear(); // otherwise isEmpty() might return incorrect value
+}
+
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+    </script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+  </body>
+</html>
