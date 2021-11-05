@@ -1,3 +1,5 @@
+V1
+
 function formTimer() {
   var now = new Date();
   var start = new Date("23/05/2021 10:00");
@@ -10,3 +12,28 @@ function formTimer() {
 
 
 tricker == minute
+
+
+-------------------------
+V2
+
+function myFunction() {
+  var now = new Date()
+  var nowTime = now.toTimeString()
+  var nowDate = now.getDate()   //วันที่ปัจจุบัน
+  var start =  new Date("07/01/2021 05:30").toTimeString()
+  var stop = new Date("03/31/2022 09:30")
+  var stopTime = stop.toTimeString()  
+  var stopDate = stop.getDate()
+  var d = now.getDay()
+//   Logger.log(now)
+//  console.log(nowTime,start,stopTime)
+//  console.log(nowDate,"  ",stopDate)
+//  console.log(nowDate <= stopDate && d != 7)
+ if(nowDate <= stopDate && d != 0  && d != 6){
+FormApp.getActiveForm().setAcceptingResponses(nowTime >= start && nowTime <= stopTime);
+
+} else{
+FormApp.getActiveForm().setAcceptingResponses(false);
+
+}
