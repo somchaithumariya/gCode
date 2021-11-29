@@ -1,0 +1,123 @@
+﻿var tempFolder
+var templateSlide
+var copyFileSlide
+var fileId
+var value0, value1, value2, value3, value4
+
+function eSmartMembersCard() {
+
+  var ss = SpreadsheetApp.openById('xxx') // จุดที่ 1
+  var sheet = ss.getSheetByName('การตอบแบบฟอร์ม 1')
+  var range = sheet.getRange(sheet.getLastRow(), 2, 1, sheet.getLastColumn())
+  var data = range.getDisplayValues()
+    data.forEach(r=>{
+      value0 = r[0] // email
+      value1 = r[1] // ชื่อ
+      value2 = r[2] // สกุล
+      value3 = r[3] // รูป
+      value4 = r[4] // เลขประจำตัว
+    })
+    
+  var id1 = value3.split('=')[1] //รูปถ่าย
+  var imgId1 = 'https://doc.google.com/uc?export=view&id='+id1  
+      tempFolder = DriveApp.getFolderById('xxx') // จุดที่ 2 ID โฟลเดอร์ temp
+      templateSlide = DriveApp.getFileById('xxx')// จุดที่ 3 ID Slide
+      copyFileSlide = templateSlide.makeCopy(value4+"_"+value1+"_"+value2, tempFolder)
+      fileId = copyFileSlide.getId()
+      
+  var tempCert = SlidesApp.openById(fileId)
+      tempCert.replaceAllText('{{ชื่อ}}', value1)
+      tempCert.replaceAllText('{{สกุล}}', value2)
+      tempCert.replaceAllText('{{เลขประจำตัว}}', value4)  
+      
+  var image1 = tempCert.getPageElementById('gb080327be7_0_25').asImage() // จุดที่ 6
+      image1.replace(imgId1)
+
+      tempCert.saveAndClose()
+  
+  //ส่งเมล+แนบ pdf
+  var recipient = 'vra.register@gmail.com'// เป็นการระบุอีเมลของฝ่ายทะเบียน หรือฝ่ายที่เกี่ยวข้อง
+  var subject =  value1+'บัตรประจำตัวสำนักซูม ตักศิลา' // หัวข้อเรื่อง
+  var body = 'สำนักซูม ตักศิลา e-SmartMembersCard Online' //ข้อความในอีเมล
+  var pdffile = DriveApp.getFileById(fileId)
+  var pdf = pdffile.getAs(MimeType.PDF) 
+  var options ={attachments:[pdf]}
+      MailApp.sendEmail(recipient, subject, body, options)
+    //  start(fileId);
+      
+  //ส่งเมล+แนบ pdf
+  var recipient = value0 // อีเมลผู้กรอกฟอร์ม จะถูกส่งกลับไปยังผู้กรอกฟอร์ม 
+  var subject = "บัตรประจำตัวแบบอิเล็กทรอนิกส์"  
+  var body = "สำนักซูมตักศิลา มีความยินดีใคร่ขอส่งบัตรประจำตัวแบบอิเล็กทรอนิกส์ ตามเอกสารแนบ"
+  var file = DriveApp.getFileById(fileId)
+  var pdf = file.getAs(MimeType.PDF)
+  var options = {attachments:[pdf]}
+      MailApp.sendEmail(recipient, subject, body, options)
+
+      start(fileId);
+}
+
+
+//สร้างสไลด์ให้เป็นรูปภาพ
+function downloadPresentation(id) {
+  var slideIds = getSlideIds(id); 
+let imagesblob = []
+  for (var i = 0, slideId; slideId = slideIds[i]; i++) {
+    imagesblob.push(downloadSlide('Slide ' + (i + 1), id, slideId));
+  }
+  return imagesblob
+}
+function downloadSlide(name, presentationId, slideId) {
+  var url = 'https://docs.google.com/presentation/d/' + presentationId +
+    '/export/png?id=' + presentationId + '&pageid=' + slideId; 
+  var options = {
+    headers: {
+      Authorization: 'Bearer ' + ScriptApp.getOAuthToken()
+    }
+  };
+  var response = UrlFetchApp.fetch(url, options);
+  var image = response.getAs(MimeType.PNG);
+  image.setName(name);
+  
+  const pdfFolder = DriveApp.getFolderById("xxx"); // จุดที่ 4 ID โฟลเดอร์ pdf 
+  pdfFolder.createFile(image).setName(value1+" / "+new Date+".JPG");
+  return image
+}
+function getSlideIds(presentationId) {
+  var url = 'https://slides.googleapis.com/v1/presentations/' + presentationId;
+  var options = {
+    headers: {
+      Authorization: 'Bearer ' + ScriptApp.getOAuthToken()
+    }
+  };
+  var response = UrlFetchApp.fetch(url, options);
+  var slideData = JSON.parse(response);
+  return slideData.slides.map(function(slide) {
+    return slide.objectId;
+  });
+}
+function start(SlideID) {
+  let images = downloadPresentation(SlideID)  
+  images.forEach(image=>{sendNotify(image)})  
+  //Tempfolder.removeFile(copyFile)
+}
+
+
+
+//ส่งไลน์แจ้งเตือน
+function sendNotify(image){
+let payloadJson = {
+       "message": 'ฟอร์มออกแบบบัตรประจำตัว'+"\n https://forms.gle/Rugr43B4HsSCg9qH9",
+       "imageFile": image
+    };
+    let token = ["xxx"]; //จุดที่ 5 ใส่ token
+    let options = {
+        "method": "post",
+        "payload": payloadJson,
+        "headers": {
+            "Authorization": "Bearer " + token
+        }
+    };
+    UrlFetchApp.fetch("https://notify-api.line.me/api/notify", options);
+}
+
