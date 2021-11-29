@@ -80,7 +80,7 @@ function downloadSlide(name, presentationId, slideId) {
   image.setName(name);
   
   const pdfFolder = DriveApp.getFolderById("xxx"); // จุดที่ 4 ID โฟลเดอร์ pdf 
-  pdfFolder.createFile(image).setName(value1+" / "+new Date+".JPG");
+  pdfFolder.createFile(image).setName(value1+" / "+new Date()+".JPG");
   return image
 }
 function getSlideIds(presentationId) {
