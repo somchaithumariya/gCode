@@ -1,0 +1,36 @@
+//ที่มาครูสมชายคัดมาจาก: https://makrookyimyam.medium.com/%E0%B9%81%E0%B8%9B%E0%B8%A5%E0%B8%87%E0%B8%A3%E0%B8%B9%E0%B8%9B%E0%B9%81%E0%B8%9A%E0%B8%9A%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B8%A7%E0%B8%B1%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B9%84%E0%B8%94%E0%B9%89%E0%B8%95%E0%B8%B2%E0%B8%A1%E0%B8%95%E0%B9%89%E0%B8%AD%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%94%E0%B9%89%E0%B8%A7%E0%B8%A2-superscript-fabbbb481ceb
+
+//เริ่มต้นด้วยการเปิด google app script ขึ้นมาแล้วเพิ่มไลบรารี่ด้วยไอดี
+
+//1CcBYkrGSeBRgphHUE92vWInyULOcJ1Ub6eFUR0_gI1h9I6whLjXtDA-P
+
+//รูปแบบ “ชื่อวัน วันที่ ชื่อเดือน ปีพ.ศ.” และต้องการให้เป็นภาษาไทย โค้ดก็จะเป็นแบบนี้
+
+let date= Superscript.formatDate({
+  date: '1/12/2021',
+  src_format: 'd/M/yyyy',
+  format: 'EEEE d MMMM yyyy',
+  language: 'th'
+})
+
+//และผลลัพท์ที่ได้จะออกมาเป็น “วันพุธที่ 1 ธันวาคม 2564”
+
+-------------------------------------
+//วันที่ในรูปแบบ “วันที่-เดือน-ปี 2 หลัก” ต้องการให้เป็นภาษาสเปน และต้องการให้เป็นปี พ.ศ.
+
+let date= Superscript.formatDate({
+  date: '1/12/2021',
+  src_format: 'd/M/yyyy',
+  format: 'd-MMMM-yy',
+  language: 'es',
+  buddhis: true
+})
+
+//ผลที่ได้ก็จะออกมาเป็น “1-diciembre-64”
+
+-------------------------------------
+//ต้องการแปลงวันที่ “วันพุธที่ 1 ธันวาคม 2564” ให้เป็นเลขไทย โค้ดก็จะเป็นแบบนี้
+
+let newDate = Superscript.toThaiNumber("วันพุธที่ 1 ธันวาคม 2564")
+
+//ผลลัพธ์ก็จะได้เป็น “วันพุธที่ ๑ ธันวาคม ๒๕๖๔”
