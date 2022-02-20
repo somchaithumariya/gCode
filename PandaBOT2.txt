@@ -1,0 +1,519 @@
+﻿var url = "XXXXX" //Google Sheet URL
+var chanalaccesstoken = "XXXXX" //Line Chanalaccesstoken
+var ss = SpreadsheetApp.openByUrl(url);
+var sheetUsers = ss.getSheetByName("users"); //ชื่อชีท1
+var scriptProp = PropertiesService.getScriptProperties()
+var sheetmsg = ss.getSheetByName("msg") //ชื่อชีท2
+
+function intialSetup () {
+  var activeSpreadsheet = SpreadsheetApp.getActiveSpreadsheet()
+  scriptProp.setProperty('key', activeSpreadsheet.getId())
+}
+
+function doPost(e) {
+
+  // สร้าง Betterlog
+  var ssId = "XXXXX";  // ไอดี ใช้ใส่ชีต betterlog
+  var sheetid = SpreadsheetApp.openById(ssId);
+  Logger = BetterLog.useSpreadsheet(ssId);   //use BetterLog (จะปิดหรือเปิดก็ได้)
+  
+  //ดึงค่า e 
+  var requestJSON = e.postData.contents;
+  Logger.log("requestJson :> "+requestJSON);
+
+  var requestObj = JSON.parse(requestJSON).events[0];  //แปลงจาก text object เป็น  JSON
+  var token = requestObj.replyToken;
+  Logger.log("requestObj.type=> "+requestObj.type);
+      // 1 เริ่ม getprofile
+      if (requestObj.type === "follow"){
+        
+          var userId = requestObj.source.userId;
+          var userProfiles = getUserProfiles(userId);
+          var lastRow = sheetUsers.getLastRow();
+              sheetUsers.getRange(lastRow + 1, 1).setValue(userId);
+              sheetUsers.getRange(lastRow + 1, 2).setValue(userProfiles[0]);
+              sheetUsers.getRange(lastRow + 1, 3).setValue(userProfiles[1]);
+              sheetUsers.getRange(lastRow + 1, 4).setFormula("=image(C" + (lastRow + 1) + ")");  
+              sheetUsers.getRange(lastRow + 1, 5).setValue(userProfiles[2]);
+              sheetUsers.getRange(lastRow + 1, 6).setValue(new Date());
+             
+        var nameu = sheetUsers.getRange(lastRow + 1, 2).getValue()  
+        var picu = sheetUsers.getRange(lastRow + 1, 3).getValue()  
+        var status = sheetUsers.getRange(lastRow + 1, 5).getValue()
+         del()
+        replyProfile(token,nameu,picu,status,userId)
+    }
+
+  // 2 เริ่มตรวจสอบ type เฉพาะที่เป็นข้อความ
+    var events = JSON.parse(e.postData.contents).events;
+        events.forEach(function(event) {
+          if (event.type == "message") {
+            var typemsg = requestObj.message.type;  
+            Logger.log("typemsg =>" +typemsg)
+            var userMessage = requestObj.message.text;
+            var m1 = userMessage.split(" ");
+            Logger.log("UserMesage: > "+userMessage);
+                          
+                          if (m1[0]==="ข้อความ"){ 
+                                      return replytypeMessage(token) // 2.1 แบบส่งข้อความออกไป
+                          }else 
+                          if (m1[0]==="วีดีโอ"){ 
+                                      return replytypeVDO(token) // 2.2 แบบส่งข้อความวีดีโอออกไป
+                          }else
+                          if (m1[0]==="รูปภาพ"){ 
+                                      return replytypepicture(token) // 2.3 แบบส่งข้อความรูปภาพออกไป
+                          }else
+                          if (m1[0]==="template"){ 
+                                      return replytypetemplate(token) // 2.4 แบบส่งข้อความquickreplyออกไป
+                          }else                                      
+                          if (m1[0]==="imagemap"){ 
+                                      return replytypeimmagemap(token) // 2.5 แบบimagemapออกไป
+
+                          }else { return replyFromSheet(requestObj) }
+              }
+        })
+
+}
+
+function getUserProfiles(userId) {
+  var url = "https://api.line.me/v2/bot/profile/" + userId;
+
+  var lineHeader = {
+    "Content-Type": "application/json",
+    "Authorization": 'Bearer ' + chanalaccesstoken,
+  };
+  
+  var options = {
+    "method" : "GET",
+    "headers" : lineHeader
+  };
+  
+  var responseJson = UrlFetchApp.fetch(url, options);
+  
+  // Logger.log("User Profiles Response: " + responseJson);
+  
+  var displayName = JSON.parse(responseJson).displayName;
+  var pictureUrl = JSON.parse(responseJson).pictureUrl;
+  var status = JSON.parse(responseJson).statusMessage;
+  
+  return [displayName, pictureUrl, status];
+}
+
+
+function del() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sht = ss.getSheetByName("users");
+  var name = sht.getRange(sht.getLastRow(), 1).getValue(); // คอลัมน์ที่ 1
+  // var name="นาย ก"
+  var lastRow = sht.getLastRow();
+  var i = 2;  // แถวที่ 2
+  var nameChk = sht.getRange(2, 1).getValue();  // แถว 2 คอลัมน์ 1
+  while (name !== nameChk) {
+    i++;
+    var nameChk = sht.getRange(i, 1).getValue(); // คอลัมน์ที่ 1
+  }
+  if (i < lastRow) {
+    sht.deleteRow(i)
+  }
+  Logger.log(name)
+}
+
+//1 replyProfile
+ function replyProfile(token,nameu,picu,status,userId) {
+
+   var url = "https://api.line.me/v2/bot/message/reply";
+
+   var lineHeader = {
+     "Content-Type": "application/json",
+     "Authorization": 'Bearer ' + chanalaccesstoken,
+   };
+
+   var postData = {
+     "replyToken" : token,
+     "messages" : [{     
+          "type": "flex",
+          "altText": "Flex Message",
+          "contents":    {
+  "type": "bubble",
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "box",
+        "layout": "horizontal",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "image",
+                "url": ""+picu,
+                "aspectMode": "cover",
+                "size": "full"
+              }
+            ],
+            "cornerRadius": "100px",
+            "width": "72px",
+            "height": "72px"
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "UID :"+userId,
+                "size": "xs",
+                "wrap": true,
+                "color": "#e76f51"
+              },
+              {
+                "type": "text",
+                "text": "Name : "+nameu,
+                "size": "md",
+                "wrap": true,
+                "color": "#f4a261"
+              },
+              {
+                "type": "text",
+                "text": "Status :"+status,
+                "wrap": true,
+                "color": "#2a9d8f"
+              }
+            ]
+          }
+        ],
+        "spacing": "xl",
+        "paddingAll": "20px"
+      }
+    ],
+    "paddingAll": "0px"
+  }
+}  //สิ้นสุด content ของเฟลกซ์
+      }]
+    };
+
+   var options = {
+     "method" : "POST",
+     "headers" : lineHeader,
+     "payload" : JSON.stringify(postData)
+   };
+   try {
+     var response = UrlFetchApp.fetch(url, options);
+   } 
+   catch (error) {
+     Logger.log(error.name + "：" + error.message);
+     return;
+   }   
+   if (response.getResponseCode() === 200) {
+     Logger.log("Sending message completed.");
+   }
+ }
+ 
+ function replytypeMessage(token){
+
+   var url = "https://api.line.me/v2/bot/message/reply";
+
+   var lineHeader = {
+     "Content-Type": "application/json",
+     "Authorization": 'Bearer ' + chanalaccesstoken,
+   };
+   var postData = {
+     "replyToken" : token,
+     "messages" : [{
+                      "type": "text",
+                      "text": "อันตึกงามกับสนามกว้างสร้างขึ้นได้ \n มีเงินหยิบโยนให้ก็เสร็จสรรพ์ \n แต่งามจิตใจกว้างนั้นต่างกัน\nการอบรมเท่านั้นเป็นปัจจัยฯ\n(หม่อมหลวงปิ่น ,มาลากุล)",
+                      "sender": {
+                          "name": "ครูสมชาย",
+                          "iconUrl": "https://sv1.picz.in.th/images/2020/06/07/qsHuhJ.png"
+                      }
+                  }                        
+                  ]  //สิ้นสุด ข้อความ
+    };
+
+   var options = {
+     "method" : "POST",
+     "headers" : lineHeader,
+     "payload" : JSON.stringify(postData)
+   };
+   try {
+     var response = UrlFetchApp.fetch(url, options);
+   } 
+   catch (error) {
+     Logger.log(error.name + "：" + error.message);
+     return;
+   }   
+   if (response.getResponseCode() === 200) {
+     Logger.log("Sending message completed.");
+   }
+  
+}
+
+function replytypeVDO(token){
+
+   var url = "https://api.line.me/v2/bot/message/reply";
+
+   var lineHeader = {
+     "Content-Type": "application/json",
+     "Authorization": 'Bearer ' + chanalaccesstoken,
+   };
+   var postData = {
+     "replyToken" : token,
+     "messages" : [
+                  {
+                    "type": "video",
+                    "originalContentUrl": "https://res.cloudinary.com/gukkghu/video/upload/v1644137356/gukkghu/Dropdown5_-_%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B9%81%E0%B8%81%E0%B9%89%E0%B9%84%E0%B8%82%E0%B9%82%E0%B8%84%E0%B8%A3%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%A3_-_Apps_Script_-_Google_Chrome_2564-09-19_14-17-29_cqn0zo.mp4",
+                    "previewImageUrl": "https://i.imgur.com/eMTe15S.jpg"
+                  }                  
+                  ]  //สิ้นสุด ข้อความ
+    };
+
+   var options = {
+     "method" : "POST",
+     "headers" : lineHeader,
+     "payload" : JSON.stringify(postData)
+   };
+   try {
+     var response = UrlFetchApp.fetch(url, options);
+   } 
+   catch (error) {
+     Logger.log(error.name + "：" + error.message);
+     return;
+   }   
+   if (response.getResponseCode() === 200) {
+     Logger.log("Sending message completed.");
+   }
+  
+}
+
+//2.3 ส่งกลับเป็นรูปภาพ
+function replytypepicture(token){
+   var url = "https://api.line.me/v2/bot/message/reply";
+
+   var lineHeader = {
+     "Content-Type": "application/json",
+     "Authorization": 'Bearer ' + chanalaccesstoken,
+   };
+   var postData = {
+     "replyToken" : token,
+     "messages" : [
+                  {
+                    "type": "image",
+                    "originalContentUrl": "https://i0.wp.com/travelblog.expedia.co.th/wp-content/uploads/2017/12/cover-%E0%B9%80%E0%B8%82%E0%B8%B2%E0%B8%84%E0%B9%89%E0%B8%AD.jpg?fit=1200%2C550&ssl=1",
+                    "previewImageUrl": "https://i0.wp.com/travelblog.expedia.co.th/wp-content/uploads/2017/12/cover-%E0%B9%80%E0%B8%82%E0%B8%B2%E0%B8%84%E0%B9%89%E0%B8%AD.jpg?fit=1200%2C550&ssl=1"
+                  }           
+                  ]  //สิ้นสุด ข้อความ
+    };
+
+   var options = {
+     "method" : "POST",
+     "headers" : lineHeader,
+     "payload" : JSON.stringify(postData)
+   };
+   try {
+     var response = UrlFetchApp.fetch(url, options);
+   } 
+   catch (error) {
+     Logger.log(error.name + "：" + error.message);
+     return;
+   }   
+   if (response.getResponseCode() === 200) {
+     Logger.log("Sending message completed.");
+   }
+
+}
+
+// 2.4 tempplate
+function replytypetemplate(token){
+
+   var url = "https://api.line.me/v2/bot/message/reply";
+
+   var lineHeader = {
+     "Content-Type": "application/json",
+     "Authorization": 'Bearer ' + chanalaccesstoken,
+   };
+
+   var postData = {
+     "replyToken" : token,
+     "messages" : [
+
+    {
+      "type": "text",
+      "text": "show QuickReply !",
+      "quickReply": {
+        "items": [
+          {
+            "type": "action",
+            "imageUrl": "https://sv1.picz.in.th/images/2021/07/16/sMEWpJ.gif",
+            "action": {
+              "type": "message",
+              "label": "image Map",
+              "text": "imagemap"
+            }
+            },
+          {
+            "type": "action",
+            "imageUrl": "https://sv1.picz.in.th/images/2021/07/16/sMEZcl.png",
+            "action": {
+              "type": "message",
+              "label": "วีดีโอ",
+              "text": "วีดีโอ"
+            }
+            }
+        ]
+      }
+    }
+      ]}     
+
+   var options = {
+     "method" : "POST",
+     "headers" : lineHeader,
+     "payload" : JSON.stringify(postData)
+   };
+
+   try {
+     var response = UrlFetchApp.fetch(url, options);
+   }
+  
+   catch (error) {
+     Logger.log(error.name + "：" + error.message);
+     return;
+   }
+    
+   if (response.getResponseCode() === 200) {
+     Logger.log("Sending message completed.");
+   }
+   }
+
+function replytypeimmagemap(token){
+   var url = "https://api.line.me/v2/bot/message/reply";
+
+   var lineHeader = {
+                      "Content-Type": "application/json",
+                      "Authorization": 'Bearer ' + chanalaccesstoken,
+                    };
+//นำ templatำ ที่สร้าง มาใส่ ที่ตัวแปร templatex ได้เลย
+var templatex = {
+  "type": "imagemap",
+  "baseUrl": "https://res.cloudinary.com/gukkghu/image/upload/v1644806318/gukkghu/%E0%B8%96%E0%B8%99%E0%B8%99%E0%B8%82%E0%B9%89%E0%B8%B2%E0%B8%A7%E0%B8%AA%E0%B8%B2%E0%B8%A3_%E0%B8%9A%E0%B8%A5%E0%B9%87%E0%B8%AD%E0%B8%81%E0%B8%9B%E0%B8%B2%E0%B8%A3%E0%B9%8C%E0%B8%95%E0%B8%B5%E0%B9%89_n7udvo.png?s=xxxx",
+  "altText": "This is an imagemap",
+  "baseSize": {
+    "width": 1040,
+    "height": 2080
+  },
+  "actions": [
+    {
+      "type": "message",
+      "area": {
+        "x": 5,
+        "y": 11,
+        "width": 437,
+        "height": 420
+      },
+      "text": "ข้อความ"
+    }
+   ]
+}
+//  สิ้นสุด imgmap
+
+   var postData = {
+     "replyToken" : token,
+
+     //นำตัวแปร templatex มาใส่ตรงนี้ หากต้องการเพิ่ม สติกเกอร์ข้อความหรืออะไร ให้คั่นต่อ , ต่อจาก templatex
+     "messages" : [templatex]
+     
+     };
+
+   var options = {
+     "method" : "POST",
+     "headers" : lineHeader,
+     "payload" : JSON.stringify(postData)
+   };
+
+   try {
+     var response = UrlFetchApp.fetch(url, options);
+   }
+  
+   catch (error) {
+     Logger.log(error.name + "：" + error.message);
+     return;
+   }
+    
+   if (response.getResponseCode() === 200) {
+     Logger.log("Sending message completed.");
+   }
+
+}   
+
+//End
+
+
+function replyFromSheet(data) {
+
+var replyUrl = "https://api.line.me/v2/bot/message/reply";
+
+var lastRow = sheetmsg.getLastRow();
+
+var wordList = sheetmsg.getRange(1, 1, lastRow, 2).getValues();
+var NoList = sheetmsg.getRange(2, 3).getValues();
+var reply_token = data.replyToken;
+var text = data.message.text;
+
+
+var replyTextList = [];
+
+for (var i = 1; i < wordList.length; i++) {
+if (wordList[i][0] == text) {
+var already = true;
+replyTextList.push(wordList[i][1]);
+}
+}
+if (!already) {
+replyTextList = NoList;
+}
+
+if (replyTextList.length < 1) {
+return;
+} else if (replyTextList.length > 5) {
+var messageLength = 5;
+} else {
+var messageLength = replyTextList.length;
+}
+
+var messageArray = [];
+
+for (var j = 0; j < messageLength; j++) {
+  messageArray.push({
+      type: "text",
+      text: "$ " + replyTextList[j],
+      emojis: [
+      {
+      index: 0,
+      productId: "5ac21a18040ab15980c9b43e",
+      emojiId: "014"
+      }
+      ]
+      }
+  );
+}
+
+var headers = {
+"Content-Type": "application/json; charset=UTF-8",
+Authorization: "Bearer " + chanalaccesstoken
+};
+
+var postData = {
+replyToken: reply_token,
+messages: messageArray
+};
+
+var options = {
+method: "post",
+headers: headers,
+payload: JSON.stringify(postData)
+};
+
+UrlFetchApp.fetch(replyUrl, options);
+}
