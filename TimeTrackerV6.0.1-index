@@ -1,0 +1,429 @@
+<!--  *********** Time Tracker *****************  -->
+<!--  ******* Ref. https://codewithcurt.com/create-employee-time-clock-web-app-on-google-sheets/ ****  -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> -->
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <!-- ****** Auto Complete ********* -->
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <!-- <link rel="stylesheet" href="/resources/demos/style.css"> -->
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery-ui.autocomplete.scroll@0.1.9/jquery.ui.autocomplete.scroll.min.js">
+  </script>
+
+  <!-- input#tags { -->
+
+
+  <!-- ****** Style CSS ********* -->
+  <style>
+    input#employee {
+      width: 282px;
+      height: 60px;
+      background-color: brown;
+      color: yellow;
+      margin-block-start: 5px;
+      border-radius: 36px;
+      font-size: 20px;
+    }
+
+    div#showtxt {
+      font-size: 27px;
+      margin-top: 20px;
+    }
+
+    /**
+      #### font digital: http://www.cufonfonts.com #### 
+      #### css @font-face generator : https://transfonter.org/ #### 
+      **/
+
+    @font-face {
+      font-family: 'Digital dream Fat';
+      src: url('https://semicon.github.io/fonts/DigitaldreamFat.woff2') format('woff2'),
+        url('https://semicon.github.io/fonts/DigitaldreamFat.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=K2D&family=Kanit&family=Sriracha&display=swap');
+
+    * {
+      margin: 0px;
+      padding: 0px;
+      box-sizing: border-box;
+      font-family: 'K2D', sans-serif;
+    }
+
+    body {
+      font-size: 1.05rem;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background-color: #92a8d1;
+      background: url("https://semicon.github.io/img/bgTimeTracker.jpg") no-repeat center center fixed;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+    }
+
+    .site-logo {
+      //content: url("https://drive.google.com/uc?export=view&id=1f7pp0Nyq0z3Ikq_s1FVNOtDOGOTJ3pvE"); 
+      content: url("https://img.in.th/images/6e3e39f9bf82efd436c3cb87cfed50f0.png");
+      /* content: url("https://semicon.github.io/img/LOGOKRUCHIANgrow.png");  */
+
+      display: inline-block;
+      margin-top: 20px;
+      width: auto;
+      height: 100px;
+    }
+
+    .msgBg {
+      background-color: transparent;
+    }
+
+    .wrapper {
+      background: #dff;
+      width: 350px;
+      padding: 20px;
+      border: 1px solid #999;
+      border-radius: 5px;
+      box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /** #### digital clock #### **/
+    .clock {
+      font-family: Digital dream Fat;
+      font-size: 28px;
+      color: cyan;
+      letter-spacing: 3px;
+      text-shadow: 1px 1px 2px teal, 0 0 25px green, 0 0 5px darkturquoise;
+      min-width: 98%;
+      background: #444;
+      padding: 5px 0px 5px 10px;
+      display: inline-block;
+      border: 3px solid #ccc;
+      border-radius: 2px;
+      outline-style: solid;
+      outline-color: #999;
+    }
+  </style>
+
+</head>
+
+<!--  ******* Time Tracker HTML Body ***********  -->
+
+<body>
+  <div class="row mt-4">
+    <div class="form-group col">
+      <div class="wrapper text-center" style="max-width:350px">
+        <div class="site-logo text-center"></div>
+        <div class="site-logo text-center">
+      </div>
+      <h5>Time-Notify-Remark-Point V.6</h5>
+
+      <span id="MyClockDisplay" class="clock mt-3" onload="showTime()"></span>
+
+      <form id="myForm">
+
+        <div class="row mt-4">
+          <div class="form-group col">
+            <label for="employee">พิมพ์ชื่อหรือรหัส </label>
+            <input id="employee"> <br>
+          </div>
+        </div>
+
+        <!-- <div class="row mt-4">
+            <div class="form-group col">
+              <label for="employee">Employee</label>
+              <select class="form-control my-auto" id="employee">
+              </select>
+            </div>
+          </div> -->
+        <!-- 
+          <div class="row mt-4">
+            <div class="form-group col">
+              <label for="employee">Employee</label>
+              <input type="search" class="form-control" id="employee" name="employee" list="employee" >
+              <!-- <select class="form-control my-auto" id="employee"> -->
+        <!-- </select> -->
+        <!-- </div>
+          </div> -->
+
+
+        <div class="row mt-4">
+          <div class="form-group col">
+            <label for="lblinfo"><i class="fas fa-book-reader"></i> หมายเหตุ:ประชุม/กิจกรรม อื่นๆ</label>
+            <input type="search" class="form-control" id="userinfo" name="userinfo" list="list" >
+            <datalist id="list">
+              <option value="ไปราชการ">ไปราชการ</option>
+              <option value="ลากิจ">ลากิจ</option>
+              <option value="ลาป่วย">ลาป่วย</option>
+              <option value="ลาคลอด">ลาคลอด</option>
+            </datalist>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="form-group col">
+            <input type="button" value="Clock In" id="clockin" class="btn btn-primary" onclick="ClockIn()" />
+            <input type="button" value="Clock Out" id="clockout" class="btn btn-warning" onclick="ClockOut()" />
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="form-group col">
+            <div class="alert" role="alert" id="message"></div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+  </div>
+  </div>
+
+
+  <!--  ******* Javascript ***********  -->
+  <script>
+    var owner = '@kruChian&หิ่งห้อยร้อยโล\n@CDev.Secrt.Somchai';
+
+    google.script.run.withSuccessHandler(showData).getData();
+    function showData(dataPerson){
+  //  var availableTags = dataPerson
+
+    console.log(dataPerson)
+    $( function() {
+      var availableTags = dataPerson 
+      $( "#employee" ).autocomplete({
+        maxShowItems: 3,
+       source: availableTags
+    });
+  } );
+}
+
+// function showtxt(){
+//   document.getElementById("showtxt").innerHTML = " ... "+document.getElementById("tags").value;
+// }
+
+
+
+      /** ******* โหลดข้อมูลพนังงานมาแสดงในแถบเลือกรายการ ******* **/
+
+      $(document ).ready(function() {
+          document.getElementById('message').innerText= owner;
+          document.getElementById('message').className = 'alert msgBg'; 
+          getEmployees()
+        });
+
+
+      function getEmployees(){     
+          google.script.run.withSuccessHandler(function(ar) 
+        {
+          var employeeSelect = document.getElementById("employee");
+          
+          //console.log(ar);
+          
+          let option = document.createElement("option");
+          option.value = "";
+          option.text = "";
+          employeeSelect.appendChild(option);
+          
+          ar.forEach(function(item, index) 
+            {    
+              let option = document.createElement("option");
+              var employee = item[0];
+              option.value = item[0];
+              option.text = item[0];
+              employeeSelect.appendChild(option);    
+            });
+
+            //console.log(employee);
+
+          }).getEmployees();
+
+        }
+      
+      /**  ******* Clock In *********** **/
+
+      async function ClockIn(){
+
+        // รับค่าที่ตั้งตำแหน่ง GPS จาก getlocation()
+        var gps = await getlocation();
+        
+        // var person   = document.getElementById("tags").value
+        var employee = document.getElementById("employee").value;
+        var userinfo = document.getElementById("userinfo").value;  
+        
+
+
+        if(employee != ''){
+            $('#message').html("<span class='spinner-border spinner-border-sm text-primary'></span> โปรดรอสักครู่ ...!");
+            
+            //เรียกฟังก์ชั่นใน code.gs
+            google.script.run.withSuccessHandler(function(ar){
+                
+                
+                //console.log(ar);
+                // รับค่าจาก code.gs มาแสดงผลหน้าเพจ
+
+                  ar.forEach(function(item, index){
+                  
+                    if(item[0] == 'SUCCESS'){
+                      var message = item[2] + '<br> บันทึกเวลามา ' + item[1];
+                      $('#message').html(message);
+                      document.getElementById("message").className = "alert alert-primary";
+                      clearForm();
+                    }else{
+                      var message = item[2] + ' ' + item[0];
+                      $('#message').html(message);
+                      document.getElementById("message").className = "alert alert-warning"; 
+                      clearForm();
+                    }
+                              
+                  });         
+              }).clockIn(employee,userinfo,gps);
+              
+        }else{
+
+            //แสดงแจ้งเตือนถ้ายังไม่เลือกรายชือ
+            $('#message').html('กรุณาเลือกรายชื่อพนักงาน ...!');
+            document.getElementById('message').className = 'alert alert-warning text-danger';
+            clearForm();
+        }
+
+        //console.log(gps);
+
+      }
+
+      /**  ******* Clock Out *********** **/
+
+      async function ClockOut(){
+
+        // รับค่าที่ตั้งตำแหน่ง GPS จาก getlocation()
+        var gps = await getlocation();
+      
+        var employee = document.getElementById("employee").value;
+        
+        if(employee != ''){
+          $('#message').html("<span class='spinner-border spinner-border-sm text-warning'></span> โปรดรอสักครู่ ...!");
+
+          //เรียกฟังก์ชั่นใน code.gs 
+          google.script.run.withSuccessHandler(function(ar){
+
+            //console.log(ar);
+            // รับค่าจาก code.gs มาแสดงผลหน้าเพจ
+
+            ar.forEach(function(item, index){
+              
+                if(item[0] == 'SUCCESS'){
+                  var message = item[2] + '<br> บันทึกเวลากลับ ' + item[1];
+                  $('#message').html(message);
+                  document.getElementById("message").className = "alert alert-primary";
+                  clearForm();
+                }else{
+                  var message = item[2] + ' ' + item[0];
+                  $('#message').html(message);
+                  document.getElementById("message").className = "alert alert-warning"; 
+                  clearForm();
+                }
+                  
+              });
+            
+            }).clockOut(employee,gps);
+        
+        }else{
+
+          //แสดงแจ้งเตือนถ้ายังไม่เลือกรายชือ
+            $('#message').html("กรุณาเลือกรายชื่อพนักงาน ...!");
+            document.getElementById("message").className = "alert alert-warning text-danger";
+            clearForm();   
+        }
+      }
+
+
+/** ********* ตำแหน่งทางภูมิศาสตร์ - ละติจูด/ลองจิจูด ******** **/
+/** Ref. https://stackify.dev/500074-how-geolocation-getcurrentposition-return-value **/
+
+      function getPosition() {
+        return new Promise((res, rej) => {
+            navigator.geolocation.getCurrentPosition(res, rej)
+        });
+      }
+       
+      async function getlocation() {
+        var data = await getPosition()
+        var lat=data.coords.latitude
+        var lng=data.coords.longitude
+
+        //console.log(lat,lng);
+
+        return [lat,lng];
+
+      }
+
+/** ******* ล้างแบบฟอร์มหลังจากส่งข้อมูล ******** **/
+
+      function clearForm(){   
+        setTimeout(function(){
+          document.getElementById('message').innerText= owner;
+          document.getElementById("message").className = "alert msgBg"; 
+          document.getElementById("myForm").reset();
+        }, 3000);          
+      }
+
+/** จาวาสคริปต์ นาฬิกาดิจิตอล ### Ref.  https://codepen.io/afarrar/pen/JRaEjP ### **/
+      
+      function showTime() {
+        var date = new Date();
+        var h = date.getHours(); // 0 - 23
+        var m = date.getMinutes(); // 0 - 59
+        var s = date.getSeconds(); // 0 - 59
+        var dot =document.textContent = '.';
+
+        if(s%2 == 1){
+          dot = document.textContent = '.';
+        }else{
+          dot = document.textContent = '\xa0';
+        }
+
+        //var session = "AM";
+
+        // if (h >= 12) {
+        //   h = h - 12;
+        //   session = "PM";
+        //   if (h == 0) {
+        //   h = 12;
+        //   }          
+        // }
+
+        h = h < 10 ? "0" + h : h;
+        m = m < 10 ? "0" + m : m;
+        s = s < 10 ? "0" + s : s;
+
+        //var time = h + ":" + m + ":" + s + " " + session;
+        var time = h + ":" + m + ":" + s + '' +dot;
+        document.getElementById("MyClockDisplay").innerText = time;
+        document.getElementById("MyClockDisplay").textContent = time;
+
+        setTimeout(showTime, 1000);
+
+      }
+
+      showTime();
+
+ 
+  </script>
+
+</body>
+
+</html>
