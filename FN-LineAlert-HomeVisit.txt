@@ -1,0 +1,49 @@
+﻿//โค้ดระบบแจ้งเตือนระบบเยี่ยมบ้านออนไลน์ ครูอั๋น แจก
+function check(){
+var ss = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("การตอบแบบฟอร์ม 1")
+var data2 = ss.getRange(ss.getLastRow(),1,1,ss.getLastColumn()).getValues()
+
+    var picIdSt = data2[0][1].toString().split("https://drive.google.com/open?id=")[1]
+    var image = DriveApp.getFileById(picIdSt).getBlob()
+    Logger.log(image)
+    var pName = data2[0][3]
+    var fName = data2[0][4]
+    var lName = data2[0][5]
+    var stId = data2[0][2]
+    var stClass = data2[0][8]
+    var stRoom = data2[0][9]
+    var urlPdf = data2[0][59]
+    var teach1 = data2[0][24]
+    var teach2 = data2[0][25]
+    var msg = "\nคำนำหน้าชื่อ : "+ pName 
+    + "\nชื่อ : "+ fName 
+    + "\nนามสกุล : "+ lName 
+    + "\nเลขประจำตัว : "+ stId 
+    + "\nระดับชั้น : "+ stClass 
+    + "\nห้อง : "+ stRoom
+    + "\nครูประจำชั้นคนที่ 1"
+    + "\nชื่อ : " + teach1
+    + "\nครูประจำชั้นคนที่ 2"
+    + "\nชื่อ : " + teach2
+    + "\nเอกสารเยี่ยมบ้าน : "+ urlPdf
+    var token = "NmMulkKAUsv8dOugPuhhlHyHTEG95EeeglqvVlPvoYD"
+    Logger.log(msg)
+    sendNotify(msg,token,image)
+}
+
+function sendNotify(msg,token,image){
+let payloadJson = {
+  "message":msg,               //image.getName(),
+  "imageFile": image
+    };    
+    let options = {
+        "method": "post",
+        "payload": payloadJson,
+        "headers": {
+            "Authorization": "Bearer " + token
+        }
+    };
+    UrlFetchApp.fetch("https://notify-api.line.me/api/notify", options);
+}
+
+//อย่าลืม call function ด้วยนะครับ
