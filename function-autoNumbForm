@@ -1,0 +1,89 @@
+แชร์สคริปรันเลขที่เอกสาร ครับ 
+****ฟอแมตรันเลขที่ = RG22060001
+
+//var form = FormApp.getActiveForm();
+
+//var dest = form.getDestinationId();
+
+//var ssID = dest;
+
+
+//---------edit------------------------
+
+var form = FormApp.openById("1V1ZFNN2uYzOWNCddKfp4dnOieWyH-4UMXKbPVDMa-xk"); //“****formID****“
+var namesList = form.getItemById("2037780706").asListItem();  ///***data-item-id*** เฉพาะส่วนคำถามนั้นๆ 2089142091
+ 
+var ss = SpreadsheetApp.openById('1UmY226dqxbKNxnnjfNYBWbpkDRiYjdjt7lpTJ3qO3W0'); //sheet
+var sh = ss.getSheetByName('การตอบแบบฟอร์ม 1');
+
+//---------edit------------------------
+
+//Logger.log(dest);
+
+//var form = FormApp.openById(formID);
+
+//var Data_from_SS = SpreadsheetApp.openById(ssID).getSheetByName("การตอบแบบฟอร์ม 1");
+var Data_from_SS = ss.getSheetByName('การตอบแบบฟอร์ม 1');
+
+function main(){
+
+ var lastRow = Data_from_SS.getLastRow() 
+
+ var lastColumn = Data_from_SS.getLastColumn();
+
+ var lastCell = Data_from_SS.getRange(lastRow, 2); //คอลัมรันเลข
+
+ var getData = lastCell.getValue();
+ //--------------------------------
+ var dt1 =lastCell.getValue();
+ var dt2 = dt1.slice(-4);
+ var dt3 = dt2*1
+
+ //--------------------------------
+ Logger.log(dt3)
+
+ var updateNumber =  dt3 + 1;
+
+ //---------------------------------
+
+ var d = Utilities.formatDate(new Date(), "GMT+7", "dd");
+ var m = Utilities.formatDate(new Date(), "GMT+7", "MM");
+ var y = Utilities.formatDate(new Date(), "GMT+7", "yy");
+
+ var docn1 = dt3 + 1; //เก็บค่าหลังรันลำดับ
+ var docn2 = digitNumber(docn1) //ตัวเลข 4D
+ var docn = "RG" + y +m + docn2
+ 
+ //--------------------------------
+ Logger.log(docn)
+
+ //namesList.setChoiceValues([updateNumber]);
+  var items = form.getItems();
+  var item = items[0];
+  //item.asListItem().setChoiceValues([updateNumber]);
+  item.asListItem().setChoiceValues([docn]);
+
+
+}
+
+//dt = digitNumber(n) //dt = ตัวแปร4หลักมี  n = ตัวแปรตัวเลข 1-3 หลัก 
+function digitNumber(n){
+
+  d = (n);
+
+  if (n < 10){
+    n = '000'+ n
+  }else if(n <100){
+    n = '00'+ n
+  }else if(n < 1000 ){
+    n = '0' + n
+
+  } else {
+    ;
+  }
+
+  return (n);
+
+  Logger.log(sumNumber);
+
+}
