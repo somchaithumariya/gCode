@@ -1,0 +1,30 @@
+function onEdit(e) {
+var token = 'xxx'
+var range = e.range;
+var row = range.getRow()
+var column = range.getColumn()
+var header = SpreadsheetApp.getActiveSheet().getRange(1,column).getValue()
+var rowEdit = SpreadsheetApp.getActiveSheet().getRange(row,column).getValue()
+var date = Utilities.formatDate(new Date(),'GMT+7','dd/MM/yyyy')
+if(e.oldValue != e.newValue){
+SpreadsheetApp.getActiveSheet().getRange(row,4).setValue('วันที่ '+date+' แก้ไข '+header+' จาก '+e.oldValue+' เป็น '+rowEdit)
+
+var message = '\n วันที่ '+date+' แก้ไข '+header+' จาก '+e.oldValue+' เป็น '+rowEdit
+sendLineNotify(message, token)
+}
+  
+}
+
+function sendLineNotify(message, token) {
+  var options = {
+    "method": "post",
+    "payload": {
+      "message": message,
+    },
+    "headers": { "Authorization": "Bearer " + token }
+  };
+  UrlFetchApp.fetch("https://notify-api.line.me/api/notify", options);
+}
+
+//https://gist.githubusercontent.com/neno-tech/2897faf4225540af7b69efaf66da96ab/raw/99b54d8278ead4ee3386b0c6af5ccb3e30f28f57/code.gs
+//https://www.youtube.com/watch?v=LKq3xN0Gqts
