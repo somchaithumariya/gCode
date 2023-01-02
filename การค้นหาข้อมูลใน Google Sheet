@@ -1,0 +1,110 @@
+โค้ด.gs------------------------แบบที่ 1
+function doGet() {
+
+  return HtmlService.createTemplateFromFile('ชื่อไฟล์').evaluate();
+}
+
+function getData(e) {
+  var id = "ID ของชีต";
+  var sheetname = "ชื่อชีต";
+  var data = SpreadsheetApp.openById(id).getSheetByName(sheetname).getDataRange().getValues();
+  var ar = [];
+  data.forEach(function(f) {
+    if (~f.indexOf(e.searchtext)) {
+      ar.push(f);
+    }
+  });
+  return ar;
+}
+
+index.html--------------------------แบบที่ 1
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<form>
+<input type="text" name="searchtext">
+<input type="button" value="ok" onClick="getData(this.parentNode)" />
+</form>
+<pre id="disp"></pre>
+
+<script>
+function dispData(e) {
+  $('#disp').text(JSON.stringify(e));
+}
+function getData(e) {
+  google.script.run.withSuccessHandler(dispData).getData(e);
+}
+</script>
+  </body>
+</html>
+
+
+
+โค้ด.gs------------------------แบบที่ 2
+
+function doGet(e) {
+  return HtmlService.createHtmlOutputFromFile("ชื่อไฟล์ html");
+  }
+
+function getFile(uname) {
+var url = "URL ของชีต";
+var ss = SpreadsheetApp.openByUrl(url); 
+var ws = ss.getSheetByName("ชื่อชีต"); 
+var data = ws.getRange(1, 1, ws.getLastRow(), 2).getValues();
+var fileCodesList = data.map (function(r) { 
+return r[0]; }); 
+var fileList = data.map(function(r) { 
+return r[1]; });
+var position = fileCodesList.indexOf(uname); 
+if(position > -1){
+return fileList[position]; } else {
+return 'ไม่พบไฟล์';
+}
+}
+
+index.html--------------------------แบบที่ 2
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body><div align ="center">
+    <h1>ระบบแจ้งผลการเรียนออนไลน์ โดย ครูอภิวัฒน์ วงศ์กัณหา</h1> 
+
+    <label>รหัสนักเรียน:</label><input type="text" id="username"> <br>
+   <input type="text" id="search" ><br>
+
+   </div>
+<script>
+    document.getElementById("username").addEventListener("input", getFile);
+    
+    function getFile() {
+    var uname = document.getElementById("username").value; 
+    
+    if(uname.length === 5){
+    google.script.run.withSuccessHandler(updateFile).getFile(uname);
+    }
+}
+
+function updateFile(file) {
+    document.getElementById("search").value = file;
+    M.updateTexfields();
+}
+</script> 
+
+</body> 
+</html>
+
+//*----------------------https://www.youtube.com/watch?v=Dcz_ywNsuo8
+//*----------------------https://docs.google.com/document/d/1poa3MC4ojIxcDgxBhad7oN1areQ8WoWGoArVMS2FOE0/edit
+
+
+
+
+
+
