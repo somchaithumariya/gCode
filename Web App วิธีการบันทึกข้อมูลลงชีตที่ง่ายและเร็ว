@@ -10,6 +10,11 @@ function addRecord(obj){
 const ss = SpreadsheetApp.getActive().getSheets()[0]
       ss.appendRow([obj.email, obj.password, obj.address])
 }
+
+
+//https://www.youtube.com/watch?v=56pYohSEaHI
+
+
 +++++++++++++
 
 <!doctype html>
